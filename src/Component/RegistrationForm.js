@@ -7,14 +7,14 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
-import { Typography, Button } from '@material-ui/core';
+import { Typography, Button, Box } from '@material-ui/core';
 import SmsIcon from '@material-ui/icons/Sms';
 import { connect } from 'react-redux';
 import { register } from '../Store/Actions/authAction';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
 
-function RegistrationForm({ open, handleClose, register, loader }) {
+function RegistrationForm({ open, handleClose, register, loader, registerStatus, error }) {
   
     const [showPassword, setShowPassword] = useState(false);
     const [name, setName] = useState({ value : '', error : false, errorMsg : 'Enter a valid name.' })
@@ -72,7 +72,13 @@ function RegistrationForm({ open, handleClose, register, loader }) {
               setPassword({ ...password, error :passwordError })
           }
           else {
-              register();
+              const data = {
+                  name : name.value,
+                  email : email.value,
+                  phone : phone.value,
+                  password : password.value
+              }
+              register(data);
           }
       }
 
@@ -81,6 +87,17 @@ function RegistrationForm({ open, handleClose, register, loader }) {
               formSubmitHandler();
           }
       }
+
+      React.useEffect(()=>{
+           if(error.value){
+               setEmail( e => {
+                   return {
+                       ...e,
+                       error : true
+                   }
+               })
+           }
+      },[error])
 
     return (
         <>
@@ -96,9 +113,10 @@ function RegistrationForm({ open, handleClose, register, loader }) {
         }}
       >
         <Fade in={open} style={{ outline : 'none' }}>
-                    <LoginContainer onKeyDown={enterPressHanlder}>
-                        { loader ? <SigninProgressBar /> : null }
-                        <FormContainer>
+                <LoginContainer onKeyDown={enterPressHanlder}>
+                    { loader ? <div className='progress'><SigninProgressBar position='fixed'/></div> : null }
+                        { !registerStatus ? 
+                            <FormContainer>
                                 <Typography variant='body1' align='center'>
                                         Welcome To
                                 </Typography>   
@@ -197,7 +215,22 @@ function RegistrationForm({ open, handleClose, register, loader }) {
                                                     </Button>
                                         </Typography> 
                                 </div>      
-                        </FormContainer>    
+                        </FormContainer> 
+                         :
+                         <div className='success'>
+                             <Typography variant='subtitle2'>
+                                <Box color='success.main'> 
+                                      Verification link has been sent successfully. Please check you mail.   
+                                </Box>
+                             </Typography>   
+                             <a href={email.value && `https://${email.value.substring(email.value.indexOf('@') + 1, email.value.length)}`} 
+                                   target ='_blank'
+                                   rel="noopener noreferrer"
+                                   style={{ textDecoration : 'none' }}>
+                                   <Typography variant='subtitle2' color='primary'> Check mail </Typography>
+                             </a>
+                         </div>    
+                        }   
                     </LoginContainer>
         </Fade>
       </Modal>
@@ -207,43 +240,61 @@ function RegistrationForm({ open, handleClose, register, loader }) {
 
 const mapStateToProps = state => {
     return {
-        loader : state.authReducer.registerLoader
+        loader : state.authReducer.registerLoader,
+        registerStatus : state.authReducer.registerStatus,
+        error : state.authReducer.error
     }
 }    
 
 const mapDispatchToProps = dispatch => {
     return {
-        register : () => dispatch(register())
+        register : data => dispatch(register(data))
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegistrationForm);
 
 const LoginContainer = styled.div`
-      height : calc(100%);
       width : 500px;
       background : #fff;
       position : absolute;
       left : 50%;
       transform : translateX(-50%);
-      overflow : auto;
       @media( max-width : 768px ){
           width : 100vw;
       }
+      .success {
+         height : 100%;
+         display : flex; 
+         flex-direction : column;
+         align-items : center; 
+         box-sizing : border-box;
+         padding : 0px 20px;
+         justify-content : center;
+         align-items : center;
+      }
+      .progress {
+          width : 100%;
+          background : red;
+          position : fixed;
+          top : 0px;
+          left : 0px;
+      }
 `
 const SigninProgressBar = styled(LinearProgress)`
-        position : absolute;
         && {
-            height : 3px;
+            height : 4px;
         }
 `
 
 const FormContainer = styled.div`
+    height : ${window.innerHeight}px;
     padding : 10px 30px;
-    padding-top : 50px;
+    padding-top : 20px;
+    overflow : auto;
 `
 const InputContainer = styled.div`
-    margin : 20px 0px;
+    margin : 10px 0px;
     position : relative;
     .MuiFormHelperText-root {
         font-weight : 500;
@@ -269,7 +320,6 @@ const StyledTextField = styled(TextField)`
             }
         }
         .MuiFormHelperText-root {
-            position : absolute;
             top : 100%;
             margin-top : 0px;
             margin-left : 0px;

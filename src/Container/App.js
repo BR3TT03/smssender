@@ -26,7 +26,7 @@ function App() {
   return (
           <MuiThemeProvider theme={theme} >  
               <ThemeProvider theme={theme} >
-                      { false ? <LandingPage /> : <Dashboard />}
+                      { false ? <Dashboard /> : <LandingPage />}
               </ThemeProvider> 
           </MuiThemeProvider> 
      );

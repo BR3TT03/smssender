@@ -4,7 +4,7 @@ import Navigation from '../Component/Navigation';
 import Homepage from '../Component/Homepage';
 import {  Avatar, Typography, IconButton } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Switch, Route, useLocation, Redirect } from 'react-router-dom';
 import Setting from '../Component/Setting';
 import Subscription from '../Component/Subscription';
 
@@ -28,9 +28,10 @@ function Dashboard() {
                             </IconButton>          
                     </AppBar>
                     <Switch>
+                        <Route path='/dashboard' component={Homepage}/>
                         <Route path='/setting' component={Setting}/>
                         <Route path='/subscription' component={Subscription}/>
-                        <Route path='/dashboard' component={Homepage} exact/>
+                        <Redirect to='/dashboard'/>
                      </Switch>
                </Content>     
         </Container>

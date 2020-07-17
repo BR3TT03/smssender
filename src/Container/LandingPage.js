@@ -8,11 +8,36 @@ import SmsIcon from '@material-ui/icons/Sms';
 import RegistrationForm from '../Component/RegistrationForm';
 import PricingCard from '../Component/PricingCard';
 import LoginForm from '../Component/LoginForm';
+import { useLocation , useHistory} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { verifyEmail } from '../Store/Actions/authAction';
+import Loader from '../Component/Loader';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
+import { SET_SUCCESS, SET_ERROR } from '../Store/Actions/actionTypes';
 
-function LandingPage() {
+function LandingPage({ verifyEmail, verifyLoader, success, setSuccess, error, setError }) {
 
     const [openRegisterForm, setOpenRegisterForm] = useState(false);
     const [openLoginForm, setOpenLoginForm] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+    const location = useLocation()
+    const history = useHistory()
+
+    const handleCloseSnackBar = (event, reason) => {
+     if (reason === 'clickaway') {
+       return;
+     }
+     setOpenSnackbar(false);
+   };
+
+   const handleCloseErrorSnackBar = (event, reason) => {
+     if (reason === 'clickaway') {
+       return;
+     }
+     setOpenErrorSnackbar(false);
+   };
 
     const handleOpenLoginForm = () => {
        setOpenLoginForm(true);
@@ -30,10 +55,38 @@ function LandingPage() {
        setOpenRegisterForm(false);
      };  
 
+     React.useEffect(() => {
+          if(location.search){
+                if(location.search.split('=')[0] === '?token') {
+                    const token = location.search.split('=')[1];
+                    verifyEmail(token);
+                    history.push('/');
+                }
+          }
+          
+     }, [location, verifyEmail, history])
+
+     const switchFormHandler = () => {
+          setOpenLoginForm(false);
+          setOpenRegisterForm(true);
+     }
+
+     React.useEffect(() => {
+          if(success.value){
+               setOpenSnackbar(true);
+               setSuccess();
+          }
+          if(error.value){
+               setOpenErrorSnackbar(true);
+               setError();
+          }
+     },[success, setSuccess, error, setError])
+
     return (
         <Container>
+             {verifyLoader && <Loader /> }
              <RegistrationForm open={openRegisterForm} handleClose={handleCloseRegisterForm} handleOpen= {handleOpenRegisterForm} />
-             <LoginForm open={openLoginForm} handleClose={handleCloseLoginForm} handleOpen= {handleOpenLoginForm} />
+             <LoginForm switchFormHandler={switchFormHandler} open={openLoginForm} handleClose={handleCloseLoginForm} handleOpen= {handleOpenLoginForm} />
               <AppBar>
                     <SmsIcon style={{ color : '#fff', marginRight : '10px' }}/>
                     <StyledTypography>
@@ -86,12 +139,44 @@ function LandingPage() {
                </Typography>    
                 <Pricing>
                       <PricingCard /> 	
-                </Pricing>        
+                </Pricing>  
+                <Snackbar open={openSnackbar} 
+                          autoHideDuration={3000} 
+                          onClose={handleCloseSnackBar}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleCloseSnackBar} severity="success">
+                         {success.msg}
+                    </Alert>
+                </Snackbar>  
+                <Snackbar open={openErrorSnackbar} 
+                          autoHideDuration={5000} 
+                          onClose={handleCloseErrorSnackBar}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleCloseErrorSnackBar} severity="error">
+                         {error.msg}
+                    </Alert>
+                </Snackbar>    
         </Container>    
     )
 }
 
-export default LandingPage;
+const mapStateToProps = state => {
+     return {
+         verifyLoader : state.authReducer.verifyingLoader,
+         success : state.authReducer.success,
+         error : state.authReducer.error
+     }
+}
+
+const mapDispatchToProps = dispatch => {
+     return {
+          verifyEmail : token => dispatch(verifyEmail(token)),
+          setSuccess : () => dispatch({ type : SET_SUCCESS }),     
+          setError : () => dispatch({ type : SET_ERROR }),     
+     }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
 
 const Container = styled.div`
      width : 100%;

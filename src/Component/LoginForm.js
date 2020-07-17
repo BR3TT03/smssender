@@ -7,20 +7,19 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
-import { Typography, Button } from '@material-ui/core';
+import { Typography, Button, Box } from '@material-ui/core';
 import SmsIcon from '@material-ui/icons/Sms';
 import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
 import { connect } from 'react-redux';
 import { login } from '../Store/Actions/authAction';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { useHistory }  from 'react-router-dom';
+import { Link }  from 'react-router-dom';
 
-function LoginForm({ open, handleClose, loader, login }) {
+function LoginForm({ open, handleClose, loader, login, switchFormHandler }) {
   
     const [showPassword, setShowPassword] = useState(false);
-    const [phone, setPhone] = useState({ value : '', error : false, errorMsg : 'Enter a valid phone number.' })
+    const [email, setEmail] = useState({ value : '', error : false, errorMsg : 'Enter a valid email address.' })
     const [password, setPassword] = useState({ value : '', error : false, errorMsg : 'Enter a valid password.' })
-    const history  = useHistory();
 
     const handleClickShowPassword = () => {
              setShowPassword(!showPassword);
@@ -30,29 +29,31 @@ function LoginForm({ open, handleClose, loader, login }) {
             event.preventDefault();
       };
 
-      const phoneChangeHandler = e => {
-        setPhone({ ...phone, value : e.target.value, error : false })
+      const emailChangeHandler = e => {
+        setEmail({ ...email, value : e.target.value, error : false })
     }
     const passwordChangeHandler = e => {
         setPassword({ ...password, value : e.target.value, error : false })
     }
 
     const formSubmitHandler = () => {
-        let phoneError = false;
+        let emailError = false;
         let passwordError = false;
+        const emailRegx = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
         if( password.value.length <= 3 ){
                passwordError = true;
           }
-        if( phone.value.length !== 10 ){
-                phoneError = true;
+          if( emailRegx.test(email.value) ){
+            emailError = false;
+           }
+            else {
+                emailError = true;
             }
-        if( passwordError || phoneError ) {
-                setPhone({ ...phone, error : phoneError })
+        if( passwordError || emailError ) {
+                setEmail({ ...email, error : emailError })
                 setPassword({ ...password, error :passwordError })
             }
         else {
-            history.push('/dashboard');
-            console.log('ok');
             login();
         }
     }
@@ -96,17 +97,17 @@ function LoginForm({ open, handleClose, loader, login }) {
                                     <InputContainer style={{marginBottom : '25px'}}>
                                             <StyledTextField
                                                     id="outlined-error-helper-text"
-                                                    label="Phone no"
+                                                    label="Email"
                                                     variant="outlined"
                                                     fullWidth
-                                                    type="number"
+                                                    type="text"
                                                     size = 'medium'
                                                     autoFocus
                                                     disabled = {loader}
-                                                    value = {phone.value}
-                                                    error = {phone.error}
-                                                    helperText = { phone.error ? <Error><WarningRoundedIcon /> <span> {phone.errorMsg} </span></Error> : '' }
-                                                    onChange = {phoneChangeHandler}
+                                                    value = {email.value}
+                                                    error = {email.error}
+                                                    helperText = { email.error ? <Error><WarningRoundedIcon /> <span> {email.errorMsg} </span></Error> : '' }
+                                                    onChange = {emailChangeHandler}
                                                 />
                                         </InputContainer>    
                                         <InputContainer>
@@ -129,7 +130,20 @@ function LoginForm({ open, handleClose, loader, login }) {
                                                         >
                                                         {showPassword ? <Visibility /> : <VisibilityOff />}
                                                 </ShowHideBtn>
-                                        </InputContainer>  
+                                        </InputContainer>
+                                        <Action>
+                                             <Link style={{ textDecoration : 'none' }}>
+                                                   <Typography variant='subtitle2' color = 'primary' gutterBottom>
+                                                        Forgot Password?
+                                                    </Typography> 
+                                             </Link>
+                                            <Typography variant='caption' className='register-btn'>
+                                                Not yet registered? 
+                                                <Box color='primary.main' component='span' className='signup' 
+                                                     onClick={switchFormHandler}> Sign up </Box>
+                                                    now.
+                                            </Typography>    
+                                         </Action>     
                                         <Typography gutterBottom align='right'>
                                                     <Button 
                                                             variant="contained" 
@@ -193,7 +207,7 @@ const SigninProgressBar = styled(LinearProgress)`
 
 const FormContainer = styled.div`
     padding : 10px 30px;
-    padding-top : 50px;
+    padding-top : 30px;
 `
 const InputContainer = styled.div`
     margin : 20px 0px;
@@ -245,5 +259,20 @@ const Error = styled.span`
    .MuiSvgIcon-root {
        font-size : 16px;
        margin-right : 5px;
+   }
+`
+
+const Action = styled.div`
+   padding : 0px 5px;
+   margin-bottom : 10px;
+   .register-btn {
+       color : #9e9e9e;
+       font-weight : 400;
+       word-spacing : 0px;
+       .signup {
+           display : inline;
+            font-weight : 500;
+           cursor: pointer;
+       }
    }
 `
