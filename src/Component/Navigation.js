@@ -6,12 +6,23 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import SmsIcon from '@material-ui/icons/Sms';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import  { logOut } from '../Store/Actions/authAction';
+import { connect } from 'react-redux';
+import Skeleton from '@material-ui/lab/Skeleton';
 
-function Navigation() {
+function Navigation({ logOut, userLoader, itemClicked }) {
+
+    const history = useHistory();
+
+    const logOutHandler = () => {
+        logOut();
+        history.push('/');
+    }
+
     return (
         <Container>
               <Header>
@@ -21,16 +32,28 @@ function Navigation() {
                     </LogoTypo>
               </Header>
               <Divider />
-              <StyledAvatar>
-                    A
-               </StyledAvatar> 
+              { !userLoader ? 
+                    <StyledAvatar>
+                        A
+                    </StyledAvatar> 
+                    :
+                    <Skeleton variant="circle" width={60} height={60} 
+                                style={{ background : 'rgba(255, 255, 255, 0.1)', marginTop : '10px' }}
+                    />
+                }
+               { !userLoader ? 
                <Name>
                    <Typography variant='subtitle2'>
                          Abhinay Shrestha
-                   </Typography>    
+                   </Typography>   
                 </Name> 
+                 :
+               <Skeleton width={80} height={30} 
+                        style={{ background : 'rgba(255, 255, 255, 0.1)', marginTop : '10px' }}
+                    />
+                }
                 <StyledList component="nav" aria-labelledby="nested-list-subheader">
-                        <StyledNavLink to='/dashboard' activeClassName='activeNav' exact>
+                        <StyledNavLink to='/dashboard' activeClassName='activeNav' exact onClick={itemClicked}>
                                 <ListItem button>
                                         <ListItemIcon>
                                             <BarChartOutlinedIcon fontSize='small'/>
@@ -38,7 +61,7 @@ function Navigation() {
                                         <ListItemText primary="Dashboard" />
                                 </ListItem>
                         </StyledNavLink>
-                        <StyledNavLink to='/setting' activeClassName='activeNav' exact>
+                        <StyledNavLink to='/setting' activeClassName='activeNav' exact onClick={itemClicked}>
                                 <ListItem button>
                                         <ListItemIcon>
                                             <SettingsIcon fontSize='small'/>
@@ -46,7 +69,7 @@ function Navigation() {
                                         <ListItemText primary="Setting" />
                                 </ListItem>
                         </StyledNavLink>
-                        <StyledNavLink to='/subscription' activeClassName='subs' exact>
+                        <StyledNavLink to='/subscription' activeClassName='subs' exact onClick={itemClicked}>
                                 <ListItem button>
                                         <ListItemIcon>
                                             <i className="flaticon-crown"></i>
@@ -54,7 +77,7 @@ function Navigation() {
                                         <ListItemText primary="Subscription" style={{ color : '#F27121' }}/>
                                 </ListItem>
                         </StyledNavLink>
-                        <ListItem button>
+                        <ListItem button onClick={logOutHandler}>
                                         <ListItemIcon>
                                             <ExitToAppIcon fontSize='small' style={{ color : '#bfbfbf' }}/>
                                         </ListItemIcon>
@@ -70,7 +93,19 @@ function Navigation() {
     )
 }
 
-export default Navigation;
+const mapStateToProps = state => {
+    return {
+        userLoader : state.userReducer.userLoader
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        logOut : () => dispatch(logOut())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation);
 
 const Container = styled.div`
     height : 100%;

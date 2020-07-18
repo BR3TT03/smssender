@@ -1,20 +1,38 @@
 import React from 'react'
 import styled from 'styled-components';
 import bg from '../Assets/bg-icon.svg';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, CircularProgress } from '@material-ui/core';
 import ChangePassword from './ChangePassword';
+import { motion } from 'framer-motion';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { connect } from 'react-redux';
 
-function Setting() {
+const fadeVariant = {
+    start : {
+        opacity : 0
+    },
+    end : {
+        opacity : 1,
+        transition : {
+            type : 'tween',
+            duration : 0.5
+        }
+    }
+}
+function Setting({ userLoader }) {
                 return (
-                        <Container>
-                                <Body>
+                        <Container variants={fadeVariant} initial='start' animate='end'>
+                                <Header>
                                     <div className= 'top'>
-                                        <Typography variant='h4' style={{ color : '#fff', fontWeight: '700' }}>
-                                            Setting
-                                        </Typography> 
-                                        <Typography variant='subtitle2' style={{ color : '#fff', fontWeight : '400', marginTop : '5px' }}>
-                                            Change your name, email, password and phone number.
-                                        </Typography>
+                                        <div style={{ flex : '1' }}>
+                                            <Typography variant='h4' style={{ color : '#fff', fontWeight: '700' }}>
+                                                Setting
+                                            </Typography> 
+                                            <Typography variant='subtitle2' style={{ color : '#fff', fontWeight : '400', marginTop : '5px' }}>
+                                                Change your name, email, password and phone number.
+                                            </Typography>
+                                         </div>
+                                        { !userLoader ?  
                                             <div className='statCard'>
                                                         <div className='title'>
                                                             <Typography variant='caption'  style={{  fontWeight : '400', color : '#eee' }}>
@@ -30,47 +48,64 @@ function Setting() {
                                                             </Typography> 
                                                         </div>    
                                                 </div>   
-                                    </div>
-                                    <Grid container>
-                                            <StyledGrid item xs={6}>
-                                                  <ChangePassword />
+                                                :  
+                                                <Skeleton animation='wave' height={120} width={200}
+                                                            style={{ background : 'rgba(242, 113, 33, 0.7)'}}
+                                                />
+                                            }
+                                    </div>  
+                                </Header>
+                                { !userLoader ? 
+                                        <GridContainer container>
+                                            <StyledGrid item xs={12} sm={12} md={4} lg={4}>
+                                                <ChangePassword />
                                             </StyledGrid>  
-                                            <StyledGrid item xs={6}>
-                                            </StyledGrid>  
-                                    </Grid>  
-                                </Body>
+                                        </GridContainer>  
+                                        :
+                                        <LoaderContainer>
+                                                <CircularProgress />
+                                        </LoaderContainer>   
+                                    } 
                         </Container>
                 )
             }
 
-export default Setting
+const mapStateToProps = state => {
+    return {
+        userLoader : state.userReducer.userLoader
+    }
+}
 
-const Container = styled.div`
-    height : 100%;
-    overflow-y : scroll;
+export default connect(mapStateToProps)(Setting)
+
+const Container = styled(motion.div)`
+    height : calc(100% - 56px);
+    overflow : auto;
     flex : 1;
-    background : #f5f5f5;
+    background : #DADDE1;
 `
-const Body = styled.div`
-     ${({ theme }) => `background :  ${theme.palette.primary.main}`};
-     position : relative;
+const Header = styled.div`
      height : 180px;
-     width : 100%;
-     background-image : url(${bg});
-     background-size: 40%;
+     ${({ theme }) => `background :  ${theme.palette.primary.main}`};
      padding : 10px 30px;
      box-sizing : border-box;
+     background-image : url(${bg});
+     background-size : 50%;
+     @media( max-width : 768px ) {
+         height : auto;
+     }
      .top {
          position : relative;
+         display : flex;
+         @media( max-width : 768px ) {
+             flex-direction : column;
+         }
              .statCard  {
                   color : #fff ;
                   box-sizing : border-box;
                   padding : 5px 10px;
                   display : flex;
-                  height : 100%;  
-                  position : absolute;
-                  right : 0px;
-                  top : 0px;
+                  height : 70px;  
                   width : 200px;
                   background : #fff;
                   border-radius : 3px;
@@ -87,13 +122,43 @@ const Body = styled.div`
                   .number {
                       font-size : 25px;
                   }
+                  @media( max-width : 768px ) {
+                        margin-top : 10px;
+                    }
          }
      }
 `
 
+
+
 const StyledGrid = styled(Grid)`
     &&& {
         box-sizing : border-box;
-        margin-top : 20px;
+        padding : 0px 5px;
     }
+`
+const GridContainer = styled(Grid)`
+    box-sizing : border-box;
+    padding : 0px 10px;
+    margin-bottom : 10px;
+    @media( min-width : 768px ) {
+        margin-top : -70px;
+    }
+    @media( max-width : 768px ) {
+        margin-top : 15px;
+    }
+`
+
+const LoaderContainer = styled.div`
+    position : absolute;
+    left : 50%;
+    transform : translate(-50%, -50%);
+    height : 60px;
+    width : 60px;
+    border-radius : 60px;
+    box-shadow: rgba(0, 0, 0, 0.05) 1px 0px 14px 0px;
+    background : #fff;
+    display : flex;
+    justify-content : center;
+    align-items : center;
 `

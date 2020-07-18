@@ -144,6 +144,7 @@ function Message() {
 export default Message;
 
 const Container = styled.div`
+    
     display : flex;
     flex-direction : column;
     margin-bottom : 20px;
@@ -163,7 +164,8 @@ const SearchBox = styled.span`
    display : flex;
    justify-content : center;
    align-items : center;
-   margin-top : 20px;
+   margin : 20px 10px 0px;
+   box-sizing : border-box;
    position : relative;
    width : auto;
    .box {
@@ -172,7 +174,6 @@ const SearchBox = styled.span`
         display : flex;
         align-items : center;
         border-radius : 5px;
-        
         button {
         border-radius : 0px;
         } 
@@ -183,6 +184,9 @@ const SearchBox = styled.span`
             border : 0px;
             &::placeholder {
                 color : #aaa;
+            }
+            @media (max-width : 992px) {
+                width : 100%;
             }
         }
        

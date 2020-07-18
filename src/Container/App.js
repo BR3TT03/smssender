@@ -5,8 +5,10 @@ import { ThemeProvider as MuiThemeProvider } from '@material-ui/styles';
 import LandingPage from './LandingPage';
 import Dashboard from './Dashboard';
 import '../font/flaticon.css'
+import { connect } from 'react-redux';
+import { checkAuth } from '../Store/Actions/authAction';
 
-function App() {
+function App({ isAuth, checkAuth }) {
 
   const theme = createMuiTheme({
     palette : {
@@ -23,13 +25,29 @@ function App() {
     }
   })
 
+  React.useEffect(() => {
+      checkAuth();
+  },[checkAuth])
+
   return (
           <MuiThemeProvider theme={theme} >  
               <ThemeProvider theme={theme} >
-                      { false ? <Dashboard /> : <LandingPage />}
+                      { isAuth ? <Dashboard /> : <LandingPage />}
               </ThemeProvider> 
           </MuiThemeProvider> 
      );
 }
 
-export default App;
+const mapStateToProps = state => {
+    return {
+        isAuth : state.authReducer.token !== null
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        checkAuth : () => dispatch(checkAuth())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

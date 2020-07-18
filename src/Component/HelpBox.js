@@ -27,7 +27,6 @@ export default HelpBox;
 const Container = styled.div`
     box-sizing : border-box;
     background : #fff;
-    margin : 0px 10px;
     border-radius : 10px;
     box-shadow: rgba(53, 64, 82, 0.05) 1px 0px 14px 0px;
     width : 100%;

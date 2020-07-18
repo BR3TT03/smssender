@@ -114,7 +114,7 @@ function RegistrationForm({ open, handleClose, register, loader, registerStatus,
       >
         <Fade in={open} style={{ outline : 'none' }}>
                 <LoginContainer onKeyDown={enterPressHanlder}>
-                    { loader ? <div className='progress'><SigninProgressBar position='fixed'/></div> : null }
+                    { loader ? <div className='progress'><SigninProgressBar/></div> : null }
                         { !registerStatus ? 
                             <FormContainer>
                                 <Typography variant='body1' align='center'>
@@ -255,6 +255,8 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(RegistrationForm);
 
 const LoginContainer = styled.div`
+      box-sizing: border-box;  
+      height : calc(100%);
       width : 500px;
       background : #fff;
       position : absolute;
@@ -264,7 +266,7 @@ const LoginContainer = styled.div`
           width : 100vw;
       }
       .success {
-         height : 100%;
+         height : ${window.innerHeight}px;
          display : flex; 
          flex-direction : column;
          align-items : center; 
@@ -288,10 +290,14 @@ const SigninProgressBar = styled(LinearProgress)`
 `
 
 const FormContainer = styled.div`
-    height : ${window.innerHeight}px;
-    padding : 10px 30px;
-    padding-top : 20px;
+    height : calc(100%);
     overflow : auto;
+    box-sizing: border-box;  
+    padding : 10px 30px;
+    padding-top : 30px;
+    @media( max-width : 768px ){
+        padding : 30px 15px 0px;
+    }
 `
 const InputContainer = styled.div`
     margin : 10px 0px;
@@ -343,4 +349,4 @@ const Error = styled.span`
        font-size : 16px;
        margin-right : 5px;
    }
-`
+`  

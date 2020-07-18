@@ -1,5 +1,5 @@
 import { START_REGISTRATION, REGISTRATION_MAIL_SUCCESS, START_LOGIN, LOGIN_SUCCESS, VERIFY_EMAIL_SUCCESS,
-      VERIFYING_EMAIL, REGISTRATION_FAIL } from './actionTypes';
+      VERIFYING_EMAIL, REGISTRATION_FAIL, LOG_OUT, LOGIN_FAIL } from './actionTypes';
 import axios from 'axios';
 
 const startRegistration = () => {
@@ -51,18 +51,31 @@ const startLogin = () => {
     }
 }
 
-const loginSuccess = () => {
+const loginSuccess = (token) => {
+    localStorage.setItem('token', token);
     return {
-        type : LOGIN_SUCCESS
+        type : LOGIN_SUCCESS,
+        token : token
     }
 }
 
-export const login = () => {
+const loginFail = (error) => {
+    return {
+        type : LOGIN_FAIL,
+        error : error
+    }
+}
+
+export const login = (data) => {
     return dispatch => {
         dispatch(startLogin());
-        setTimeout(() => {
-            dispatch(loginSuccess());    
-        }, 2000);
+        axios.post(`/authenticate`, data)
+          .then(res => {
+              dispatch(loginSuccess(res.data.split(' ')[2]));
+          })
+          .catch(err => {
+              dispatch(loginFail('Incorrect email or password.'))
+          })
     }
 } 
 
@@ -101,3 +114,20 @@ export const verifyEmail = token => {
           })
     }
 }
+
+export const logOut = () => {
+    localStorage.removeItem('token');
+    return {
+        type : LOG_OUT
+    }
+}
+
+export const checkAuth = () => {
+    return dispatch => {
+        const token = localStorage.getItem('token');
+        if(token){
+            dispatch(loginSuccess(token));
+        }
+    }
+}
+

@@ -12,3 +12,9 @@ export const VERIFYING_EMAIL = 'VERIFYING_EMAIL';
 
 export const SET_SUCCESS = 'SET_SUCCESS';
 export const SET_ERROR = 'SET_ERROR';
+
+export const LOADING_USER_DATA = 'LOADING_USER_DATA';
+export const LOAD_USER_DATA_SUCCESS = 'LOAD_USER_DATA_SUCCESS';
+export const LOAD_USER_DATA_FAIL = 'LOAD_USER_DATA_FAIL';
+
+export const LOG_OUT = 'LOG_OUT';

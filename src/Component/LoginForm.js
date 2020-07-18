@@ -15,7 +15,7 @@ import { login } from '../Store/Actions/authAction';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { Link }  from 'react-router-dom';
 
-function LoginForm({ open, handleClose, loader, login, switchFormHandler }) {
+function LoginForm({ open, handleClose, loader, login, switchFormHandler, error }) {
   
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState({ value : '', error : false, errorMsg : 'Enter a valid email address.' })
@@ -48,13 +48,17 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler }) {
            }
             else {
                 emailError = true;
-            }
+           }
         if( passwordError || emailError ) {
                 setEmail({ ...email, error : emailError })
                 setPassword({ ...password, error :passwordError })
-            }
+           }
         else {
-            login();
+            const data = {
+                username : email.value,
+                password : password.value
+            }
+            login(data);
         }
     }
 
@@ -63,6 +67,23 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler }) {
             formSubmitHandler();
         }
     }
+
+    React.useEffect(()=>{
+        if(error.value){
+            setEmail( e => {
+                return {
+                    ...e,
+                    error : true
+                }
+            })
+            setPassword(p => {
+                return {
+                    ...p,
+                    error : true
+                }
+            })
+        }
+   },[error])
 
     return (
         <>
@@ -79,7 +100,7 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler }) {
       >
         <Fade in={open} style={{ outline : 'none' }}>
                     <LoginContainer onKeyDown={enterPressHanlder}>
-                        { loader ? <SigninProgressBar /> : null }
+                        { loader ? <div className='progress'><SigninProgressBar/></div>  : null }
                         <FormContainer>
                                 <Typography variant='body1' align='center'>
                                         Welcome To
@@ -174,40 +195,54 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler }) {
 
 const mapStateToProps = state => {
     return {
-        loader : state.authReducer.loginLoader
+        loader : state.authReducer.loginLoader,
+        error : state.authReducer.error
     }
 }    
 
 const mapDispatchToProps = dispatch => {
     return {
-        login : () => dispatch(login())
+        login : (data) => dispatch(login(data))
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
 
 const LoginContainer = styled.div`
-      height : 100%;
+      box-sizing: border-box;  
+      height : calc(100%);
       width : 500px;
       background : #fff;
       position : absolute;
       left : 50%;
-      overflow : auto;
       transform : translateX(-50%);
       @media( max-width : 768px ){
           width : 100vw;
       }
+      .progress {
+          width : 100%;
+          background : red;
+          position : fixed;
+          top : 0px;
+          left : 0px;
+          z-index : 9999;
+      }
 `
 const SigninProgressBar = styled(LinearProgress)`
-        position : absolute;
         && {
-            height : 3px;
+            height : 4px;
         }
 `
 
 const FormContainer = styled.div`
-    padding : 10px 30px;
+    height : calc(100%);
+    overflow : auto;
+    box-sizing: border-box;  
+    padding : 0px 30px;
     padding-top : 30px;
+    @media( max-width : 768px ){
+        padding : 30px 15px 0px;
+    }
 `
 const InputContainer = styled.div`
     margin : 20px 0px;

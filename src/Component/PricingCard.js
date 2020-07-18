@@ -1,14 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Card } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import paperplane from '../Assets/paperplane.svg'
 import plane from '../Assets/plane.svg'
 import rocket from '../Assets/rocket.svg'
 
 function PricingCard() {
     return (
-        <Container>
-          <StyledCard elevation={8} square colorprops='success'>
+        <GridContainer container justify='center'>
+          <StyledGrid item xs={12} sm={5} md={5} lg={3} colorprops='success'>
                 <div className='banner'>
                      <span>
                          Free
@@ -32,8 +32,8 @@ function PricingCard() {
                     <li> Loremipsum text Loremipsum text Loremipsum text </li>
                     <li> Loremipsum text Loremipsum text Loremipsum text </li>
                  </ul>       
-           </StyledCard> 
-           <StyledCard elevation={8} square colorprops='primary'>
+           </StyledGrid> 
+           <StyledGrid item xs={12} sm={5} md={5} lg={3} colorprops='primary'>
                 <div className='banner'>
                      <span>
                          Starter
@@ -57,8 +57,8 @@ function PricingCard() {
                     <li> Loremipsum text Loremipsum text Loremipsum text </li>
                     <li> Loremipsum text Loremipsum text Loremipsum text </li>
                  </ul>       
-           </StyledCard>  
-           <StyledCard elevation={8} square colorprops='secondary'>
+           </StyledGrid>  
+           <StyledGrid item xs={12} sm={5} md={5} lg={3} colorprops='secondary'>
                 <div className='banner'>
                      <span>
                          Pro
@@ -75,37 +75,34 @@ function PricingCard() {
                                 0.75
                         </span> 
                         <span>
-                                /100sms
+                                /sms
                         </span>  
                  </div>   
                  <ul className='desc'>
                     <li> Loremipsum text Loremipsum text Loremipsum text </li>
                     <li> Loremipsum text Loremipsum text Loremipsum text </li>
                  </ul>       
-           </StyledCard>      
-        </Container>
+           </StyledGrid>      
+        </GridContainer>
     )
 }
 
 export default PricingCard;
 
-const Container = styled.div`
-    box-sizing : border-box;
-    display : flex;
-    justify-content : center;
-    margin-bottom : 20px;
-    margin : 30px 0px;
-    @media (max-width : 992px) {
-        flex-direction : column;
+const GridContainer = styled(Grid)`
+    && {
+        box-sizing : border-box;
     }
 `
 
-const StyledCard = styled(Card)`
+const StyledGrid = styled(Grid)`
    &&& {
-   margin : 5px 20px;    
+    box-shadow: rgba(53, 64, 82, 0.05) 1px 0px 14px 0px;
+   margin : 5px 15px;    
    height : 400px;
-   width : 300px;
+   background : #fff;
    box-sizing : border-box;
+   border-radius : 7px;
    overflow : visible;
    .svgIcon {
        margin : 20px auto;
@@ -184,6 +181,7 @@ const StyledCard = styled(Card)`
             margin-top : 30px;
             li {
                 font-size : 14px;
+                padding : 0px 10px;
             }
         }      
    }

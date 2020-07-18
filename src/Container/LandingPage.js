@@ -262,5 +262,6 @@ const Pricing = styled(Grid)`
     &&& {
          display : flex;
          justify-content : center;
+         margin : 20px auto;
     }
 `

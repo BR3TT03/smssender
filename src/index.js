@@ -15,7 +15,7 @@ axios.defaults.baseURL = 'https://sms-nepal-backend.herokuapp.com'
 
 const app = <Provider store={store}>
                 <BrowserRouter>
-                            <App/>
+                     <App/>
                </BrowserRouter>
             </Provider>
 

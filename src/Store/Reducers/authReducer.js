@@ -1,7 +1,8 @@
 import { START_REGISTRATION, REGISTRATION_MAIL_SUCCESS, START_LOGIN, LOGIN_SUCCESS,VERIFYING_EMAIL , VERIFY_EMAIL_SUCCESS,
-        SET_SUCCESS, REGISTRATION_FAIL, SET_ERROR } from '../Actions/actionTypes';
+        SET_SUCCESS, REGISTRATION_FAIL, SET_ERROR, LOGIN_FAIL, LOG_OUT } from '../Actions/actionTypes';
 
 const initState = {
+    token : null,
     registerLoader : false,
     loginLoader : false,
     registerStatus : false,
@@ -31,8 +32,19 @@ const authReducer = (state = initState, action) => {
         case LOGIN_SUCCESS : 
                      return {
                          ...state,
-                         loginLoader : false
+                         loginLoader : false,
+                         token : action.token
                      }  
+        case LOGIN_FAIL: 
+                     return {
+                         ...state,
+                         loginLoader : false,
+                         error : {
+                            ...state.error,
+                            value : true,
+                            msg : action.error
+                        }
+                     }               
         case VERIFYING_EMAIL : 
                         return {
                             ...state,
@@ -59,6 +71,11 @@ const authReducer = (state = initState, action) => {
                              msg : 'Email has been verified successfully. Please Login to continue.'
                          }
                      }   
+        case LOG_OUT :
+                    return {
+                        ...state,
+                        token : null
+                    } 
         case SET_SUCCESS : 
                      return {
                          ...state,
