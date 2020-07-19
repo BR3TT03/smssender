@@ -13,7 +13,6 @@ function ChangePassword() {
             <Body>
                     <InputContainer>
                         <StyledTextField
-                                id="outlined-error-helper-text"
                                 label="Current password"
                                 variant="outlined"
                                 fullWidth
@@ -23,7 +22,6 @@ function ChangePassword() {
                     </InputContainer> 
                     <InputContainer>
                         <StyledTextField
-                                id="outlined-error-helper-text"
                                 label="New password"
                                 variant="outlined"
                                 fullWidth
@@ -33,7 +31,6 @@ function ChangePassword() {
                     </InputContainer> 
                     <InputContainer>
                         <StyledTextField
-                                id="outlined-error-helper-text"
                                 label="Confirm password"
                                 variant="outlined"
                                 fullWidth

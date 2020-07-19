@@ -13,8 +13,9 @@ import { connect } from 'react-redux';
 import { register } from '../Store/Actions/authAction';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
+import { resendEmail } from '../Store/Actions/authAction'
 
-function RegistrationForm({ open, handleClose, register, loader, registerStatus, error }) {
+function RegistrationForm({ open, handleClose, register, loader, registerStatus, error, resendEmail }) {
   
     const [showPassword, setShowPassword] = useState(false);
     const [name, setName] = useState({ value : '', error : false, errorMsg : 'Enter a valid name.' })
@@ -41,6 +42,10 @@ function RegistrationForm({ open, handleClose, register, loader, registerStatus,
         }
         const passwordChangeHandler = e => {
             setPassword({ ...password, value : e.target.value, error : false })
+        }
+
+        const resendHandler = () => {
+            resendEmail(email.value)
         }
 
       const formSubmitHandler = () => {
@@ -219,16 +224,26 @@ function RegistrationForm({ open, handleClose, register, loader, registerStatus,
                          :
                          <div className='success'>
                              <Typography variant='subtitle2'>
-                                <Box color='success.main'> 
+                                <Box color='success.main' align='center'> 
                                       Verification link has been sent successfully. Please check you mail.   
                                 </Box>
-                             </Typography>   
-                             <a href={email.value && `https://${email.value.substring(email.value.indexOf('@') + 1, email.value.length)}`} 
-                                   target ='_blank'
-                                   rel="noopener noreferrer"
-                                   style={{ textDecoration : 'none' }}>
-                                   <Typography variant='subtitle2' color='primary'> Check mail </Typography>
-                             </a>
+                             </Typography>  
+                             <div className='action'>
+                                    <Button variant='contained' color='secondary' size='small' onClick={resendHandler} disableElevation>
+                                            Resend
+                                    </Button>
+                                    <a href={email.value && `https://${email.value.substring(email.value.indexOf('@') + 1, email.value.length)}`} 
+                                        target ='_blank'
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration : 'none' }}>
+                                            <Button color='primary' variant='contained' size='small' disableElevation>
+                                                    Check mail
+                                            </Button>      
+                                    </a>
+                                    <Button variant='contained' size='small' disableElevation onClick={handleClose}>
+                                            Cancel
+                                    </Button>
+                              </div>    
                          </div>    
                         }   
                     </LoginContainer>
@@ -248,7 +263,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        register : data => dispatch(register(data))
+        register : data => dispatch(register(data)),
+        resendEmail : email => dispatch(resendEmail(email))
     }
 }
 
@@ -274,6 +290,15 @@ const LoginContainer = styled.div`
          padding : 0px 20px;
          justify-content : center;
          align-items : center;
+      }
+      .action {
+          display : flex;
+          margin-top : 10px;
+          justify-content : center;
+          .MuiButtonBase-root {
+              text-transform : capitalize;
+              margin-right : 10px;
+          }
       }
       .progress {
           width : 100%;

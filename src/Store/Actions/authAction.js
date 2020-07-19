@@ -1,5 +1,5 @@
 import { START_REGISTRATION, REGISTRATION_MAIL_SUCCESS, START_LOGIN, LOGIN_SUCCESS, VERIFY_EMAIL_SUCCESS,
-      VERIFYING_EMAIL, REGISTRATION_FAIL, LOG_OUT, LOGIN_FAIL } from './actionTypes';
+      VERIFYING_EMAIL, REGISTRATION_FAIL, LOG_OUT, LOGIN_FAIL, RESENDING_EMAIL, RESEND_EMAIL_FAIL, RESEND_EMAIL_SUCCESS } from './actionTypes';
 import axios from 'axios';
 
 const startRegistration = () => {
@@ -113,6 +113,37 @@ export const verifyEmail = token => {
               console.log(err);
           })
     }
+}
+
+const resendingEmail = () => {
+    return {
+        type : RESENDING_EMAIL
+    }
+}
+
+const resendEmailSuccess = () => {
+    return {
+        type : RESEND_EMAIL_SUCCESS
+    }
+}
+
+const resendEmailFail = () => {
+    return {
+        type : RESEND_EMAIL_FAIL
+    }
+}
+
+export const resendEmail = email => {
+     return dispatch => {
+         dispatch(resendingEmail())
+         axios.post(`reSendEmail/${email}`)
+           .then(_ => {
+               dispatch(resendEmailSuccess())
+           })
+           .catch(err => {
+               dispatch(resendEmailFail('Problem in resending email.'))
+           })
+     }
 }
 
 export const logOut = () => {

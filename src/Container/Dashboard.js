@@ -13,7 +13,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Media from 'react-media';
 
-function Dashboard({ loadUser, userLoader }) {
+function Dashboard({ loadUser, userLoader, user }) {
 
     const [openDrawer, setOpenDrawer] = React.useState(false);
     const location = useLocation();
@@ -55,7 +55,7 @@ function Dashboard({ loadUser, userLoader }) {
                             </Typography>   
                             {!userLoader ? 
                                 <StyledAvatar color='success'>
-                                    A
+                                    { user.name && user.name.charAt(0).toUpperCase() }
                                 </StyledAvatar>
                                 : 
                                 <Skeleton variant="circle" width={35} height={35} 
@@ -80,7 +80,8 @@ function Dashboard({ loadUser, userLoader }) {
 
 const mapStateToProps = state => {
     return {
-        userLoader : state.userReducer.userLoader
+        userLoader : state.userReducer.userLoader,
+        user : state.userReducer.user,
     }
 }
 

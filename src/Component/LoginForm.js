@@ -154,9 +154,9 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler, error 
                                         </InputContainer>
                                         <Action>
                                              <Link style={{ textDecoration : 'none' }}>
-                                                   <Typography variant='subtitle2' color = 'primary' gutterBottom>
+                                                   <Typography to='/' variant='subtitle2' color = 'primary' gutterBottom>
                                                         Forgot Password?
-                                                    </Typography> 
+                                                   </Typography> 
                                              </Link>
                                             <Typography variant='caption' className='register-btn'>
                                                 Not yet registered? 

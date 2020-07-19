@@ -14,7 +14,7 @@ import  { logOut } from '../Store/Actions/authAction';
 import { connect } from 'react-redux';
 import Skeleton from '@material-ui/lab/Skeleton';
 
-function Navigation({ logOut, userLoader, itemClicked }) {
+function Navigation({ logOut, userLoader, itemClicked, user }) {
 
     const history = useHistory();
 
@@ -34,7 +34,7 @@ function Navigation({ logOut, userLoader, itemClicked }) {
               <Divider />
               { !userLoader ? 
                     <StyledAvatar>
-                        A
+                       { user.name && user.name.charAt(0).toUpperCase() }
                     </StyledAvatar> 
                     :
                     <Skeleton variant="circle" width={60} height={60} 
@@ -44,7 +44,7 @@ function Navigation({ logOut, userLoader, itemClicked }) {
                { !userLoader ? 
                <Name>
                    <Typography variant='subtitle2'>
-                         Abhinay Shrestha
+                         { user.name && user.name }
                    </Typography>   
                 </Name> 
                  :
@@ -95,7 +95,8 @@ function Navigation({ logOut, userLoader, itemClicked }) {
 
 const mapStateToProps = state => {
     return {
-        userLoader : state.userReducer.userLoader
+        userLoader : state.userReducer.userLoader,
+        user : state.userReducer.user
     }
 }
 

@@ -1,5 +1,6 @@
 import { START_REGISTRATION, REGISTRATION_MAIL_SUCCESS, START_LOGIN, LOGIN_SUCCESS,VERIFYING_EMAIL , VERIFY_EMAIL_SUCCESS,
-        SET_SUCCESS, REGISTRATION_FAIL, SET_ERROR, LOGIN_FAIL, LOG_OUT } from '../Actions/actionTypes';
+        SET_SUCCESS, REGISTRATION_FAIL, SET_ERROR, LOGIN_FAIL, LOG_OUT, RESENDING_EMAIL, RESEND_EMAIL_SUCCESS,
+        RESEND_EMAIL_FAIL } from '../Actions/actionTypes';
 
 const initState = {
     token : null,
@@ -70,7 +71,32 @@ const authReducer = (state = initState, action) => {
                              value : true,
                              msg : 'Email has been verified successfully. Please Login to continue.'
                          }
-                     }   
+                     } 
+        case RESENDING_EMAIL :
+                      return {
+                          ...state,
+                          registerLoader : true
+                      }  
+        case RESEND_EMAIL_SUCCESS :
+                        return {
+                            ...state,
+                            registerLoader : false,
+                            success : {
+                                ...state.success,
+                                value : true,
+                                msg : 'Verification link has been sent successfully'
+                            }
+                        } 
+        case RESEND_EMAIL_FAIL :
+                        return {
+                            ...state,
+                            registerLoader : false,
+                            error : {
+                                ...state.error,
+                                value : true,
+                                msg : action.error
+                            }
+                        } 
         case LOG_OUT :
                     return {
                         ...state,

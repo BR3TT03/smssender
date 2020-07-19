@@ -21,7 +21,7 @@ const fadeVariant = {
     }
 }
 
-function Homepage({ userLoader }) {
+function Homepage({ userLoader, user }) {
     return (
         <Container variants={fadeVariant} initial='start' animate='end'>
               <Header>
@@ -46,7 +46,7 @@ function Homepage({ userLoader }) {
                                     </div>    
                                     <div>
                                         <Typography variant='subtitle2' className='number' component='div' align='right' style={{ fontFamily : 'Kanit' }}>
-                                            100
+                                            { user.userStatus && user.userStatus}
                                         </Typography> 
                                     </div>    
                              </div> 
@@ -76,7 +76,8 @@ function Homepage({ userLoader }) {
 
 const mapStateToProps = state => {
     return {
-        userLoader : state.userReducer.userLoader
+        userLoader : state.userReducer.userLoader,
+        user : state.userReducer.user,
     }
 }
 
