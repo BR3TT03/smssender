@@ -8,12 +8,12 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
 import { Typography, Button, Box } from '@material-ui/core';
-import SmsIcon from '@material-ui/icons/Sms';
 import { connect } from 'react-redux';
 import { register } from '../Store/Actions/authAction';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
 import { resendEmail } from '../Store/Actions/authAction'
+import logo from '../Assets/logo.png'
 
 function RegistrationForm({ open, handleClose, register, loader, registerStatus, error, resendEmail }) {
   
@@ -126,7 +126,7 @@ function RegistrationForm({ open, handleClose, register, loader, registerStatus,
                                         Welcome To
                                 </Typography>   
                                 <Typography variant='h6' align='center' color='primary'>
-                                        <SmsIcon color='primary' style={{ marginRight : '10px', fontSize : '30px' }}/>
+                                     <img src={logo} style={{ color : '#fff',width : '35px', marginRight : '10px' }} alt=''/>
                                 </Typography>   
                                 <Typography variant='body2' align='center' gutterBottom>
                                         "SMS Nepal"
@@ -229,18 +229,18 @@ function RegistrationForm({ open, handleClose, register, loader, registerStatus,
                                 </Box>
                              </Typography>  
                              <div className='action'>
-                                    <Button variant='contained' color='secondary' size='small' onClick={resendHandler} disableElevation>
+                                    <Button disabled={loader} variant='contained' color='secondary' size='small' onClick={resendHandler} disableElevation>
                                             Resend
                                     </Button>
                                     <a href={email.value && `https://${email.value.substring(email.value.indexOf('@') + 1, email.value.length)}`} 
                                         target ='_blank'
                                         rel="noopener noreferrer"
                                         style={{ textDecoration : 'none' }}>
-                                            <Button color='primary' variant='contained' size='small' disableElevation>
+                                            <Button disabled={loader} color='primary' variant='contained' size='small' disableElevation>
                                                     Check mail
                                             </Button>      
                                     </a>
-                                    <Button variant='contained' size='small' disableElevation onClick={handleClose}>
+                                    <Button disabled={loader} variant='contained' size='small' disableElevation onClick={handleClose}>
                                             Cancel
                                     </Button>
                               </div>    

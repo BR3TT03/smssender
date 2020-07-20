@@ -4,7 +4,6 @@ import curve from '../Assets/bg.svg';
 import cartoon from '../Assets/cartoon.png';
 import { Grid, Typography, Button } from '@material-ui/core';
 import ServiceComponent from '../Component/ServiceComponent';
-import SmsIcon from '@material-ui/icons/Sms';
 import RegistrationForm from '../Component/RegistrationForm';
 import PricingCard from '../Component/PricingCard';
 import LoginForm from '../Component/LoginForm';
@@ -15,6 +14,7 @@ import Loader from '../Component/Loader';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import { SET_SUCCESS, SET_ERROR } from '../Store/Actions/actionTypes';
+import logo from '../Assets/logo.png'
 
 function LandingPage({ verifyEmail, verifyLoader, success, setSuccess, error, setError }) {
 
@@ -88,7 +88,7 @@ function LandingPage({ verifyEmail, verifyLoader, success, setSuccess, error, se
              <RegistrationForm open={openRegisterForm} handleClose={handleCloseRegisterForm} handleOpen= {handleOpenRegisterForm} />
              <LoginForm switchFormHandler={switchFormHandler} open={openLoginForm} handleClose={handleCloseLoginForm} handleOpen= {handleOpenLoginForm} />
               <AppBar>
-                    <SmsIcon style={{ color : '#fff', marginRight : '10px' }}/>
+                    <img src={logo} style={{ color : '#fff',width : '25px', marginRight : '10px' }} alt=''/>
                     <StyledTypography>
                          SMS Nepal
                     </StyledTypography>     

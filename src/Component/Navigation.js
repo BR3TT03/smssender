@@ -7,12 +7,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
 import { NavLink, useHistory } from 'react-router-dom';
-import SmsIcon from '@material-ui/icons/Sms';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import  { logOut } from '../Store/Actions/authAction';
 import { connect } from 'react-redux';
 import Skeleton from '@material-ui/lab/Skeleton';
+import logo from '../Assets/logo.png'
 
 function Navigation({ logOut, userLoader, itemClicked, user }) {
 
@@ -26,7 +26,7 @@ function Navigation({ logOut, userLoader, itemClicked, user }) {
     return (
         <Container>
               <Header>
-                    <SmsIcon/>
+                     <img src={logo} style={{ color : '#fff',width : '25px', marginRight : '10px' }} alt=''/>
                     <LogoTypo>
                          SMS Nepal
                     </LogoTypo>

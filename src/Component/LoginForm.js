@@ -8,7 +8,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
 import { Typography, Button, Box } from '@material-ui/core';
-import SmsIcon from '@material-ui/icons/Sms';
+import logo from '../Assets/logo.png';
 import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
 import { connect } from 'react-redux';
 import { login } from '../Store/Actions/authAction';
@@ -106,7 +106,7 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler, error 
                                         Welcome To
                                 </Typography>   
                                 <Typography variant='h6' align='center' color='primary'>
-                                        <SmsIcon color='primary' style={{ marginRight : '10px', fontSize : '30px' }}/>
+                                        <img src={logo} style={{ color : '#fff',width : '35px', marginRight : '10px' }} alt=''/>
                                 </Typography>   
                                 <Typography variant='body2' align='center' gutterBottom>
                                         "SMS Nepal"

@@ -18,7 +18,7 @@ export const loadUser = () => {
     return (dispatch, getState) => {
         dispatch(loadingUser());
         const token = getState().authReducer.token;
-        axios.get(`/userByEmail/abhinay.shrestha11@gmail.com`,
+        axios.get(`/userByEmail`,
             { headers : { Authorization : `Bearer ${token}`} }
         )
         .then(res => {

@@ -71,9 +71,11 @@ export const login = (data) => {
         dispatch(startLogin());
         axios.post(`/authenticate`, data)
           .then(res => {
+              console.log(res);
               dispatch(loginSuccess(res.data.split(' ')[2]));
           })
           .catch(err => {
+              console.log(err.response);
               dispatch(loginFail('Incorrect email or password.'))
           })
     }
@@ -101,7 +103,6 @@ export const verifyEmail = token => {
         dispatch(verifyingEmail());
         axios.get(`/user/verify?token=${token}`)
           .then(res => {
-              console.log(res);
               if(res.data){
                   dispatch(verifyEmailSuccess());
               }

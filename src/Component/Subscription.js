@@ -26,10 +26,10 @@ function Subscription({ userLoader }) {
                                 <div className= 'top'>
                                     <div style={{ flex : '1' }}>
                                         <Typography variant='h4' style={{ color : '#fff', fontWeight: '700' }}>
-                                            Setting
+                                            Subscription
                                         </Typography> 
                                         <Typography variant='subtitle2' style={{ color : '#fff', fontWeight : '400', marginTop : '5px' }}>
-                                            Change your name, email, password and phone number.
+                                            Change your plan.
                                         </Typography>
                                     </div>
                                     { !userLoader ?  
