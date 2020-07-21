@@ -1,6 +1,7 @@
 import { START_REGISTRATION, REGISTRATION_MAIL_SUCCESS, START_LOGIN, LOGIN_SUCCESS,VERIFYING_EMAIL , VERIFY_EMAIL_SUCCESS,
         SET_SUCCESS, REGISTRATION_FAIL, SET_ERROR, LOGIN_FAIL, LOG_OUT, RESENDING_EMAIL, RESEND_EMAIL_SUCCESS,
-        RESEND_EMAIL_FAIL } from '../Actions/actionTypes';
+        RESEND_EMAIL_FAIL, UNVERIFIED_ACCOUNT, SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_FAIL, SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT,
+       SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_SUCCESS } from '../Actions/actionTypes';
 
 const initState = {
     token : null,
@@ -9,7 +10,9 @@ const initState = {
     registerStatus : false,
     verifyingLoader : false,
     success : { value : false, msg : '' },
-    error : { value : false, msg : '' }
+    error : { value : false, msg : '' },
+    unverifiedMsg : false,
+    unverifiedAccountSuccess : false
 }
 
 const authReducer = (state = initState, action) => {
@@ -97,6 +100,34 @@ const authReducer = (state = initState, action) => {
                                 msg : action.error
                             }
                         } 
+        case UNVERIFIED_ACCOUNT : 
+                        return {
+                            ...state,
+                            unverifiedMsg : true,
+                            unverifiedAccountSuccess : false,
+                            loginLoader : false,
+                        }
+        case SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT :
+                        return {
+                            ...state,
+                            loginLoader : true
+                        }    
+        case SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_SUCCESS : 
+                        return {
+                            ...state,
+                            loginLoader : false,
+                            unverifiedMsg : false,
+                            unverifiedAccountSuccess : true,
+                        }
+        case SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_FAIL : 
+                        return {
+                            ...state,
+                            error : {
+                                ...state.error,
+                                value : true,
+                                msg : action.error
+                            }
+                        }
         case LOG_OUT :
                     return {
                         ...state,

@@ -11,11 +11,13 @@ import { Typography, Button, Box } from '@material-ui/core';
 import logo from '../Assets/logo.png';
 import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
 import { connect } from 'react-redux';
-import { login } from '../Store/Actions/authAction';
+import { login, sendEmailToUnverifiedAccount } from '../Store/Actions/authAction';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { Link }  from 'react-router-dom';
+import Alert from '@material-ui/lab/Alert';
 
-function LoginForm({ open, handleClose, loader, login, switchFormHandler, error }) {
+function LoginForm({ open, handleClose, loader, login, switchFormHandler, error, unverifiedMsg,
+                 sendEmailToUnverifiedAccount, unverifiedAccountSuccess }) {
   
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState({ value : '', error : false, errorMsg : 'Enter a valid email address.' })
@@ -68,6 +70,10 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler, error 
         }
     }
 
+    const sendEmailHandler = () => {
+        sendEmailToUnverifiedAccount(email.value);
+    }
+
     React.useEffect(()=>{
         if(error.value){
             setEmail( e => {
@@ -114,7 +120,40 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler, error 
                                 <Typography variant='body1' align='center'>
                                         <span style={{ fontWeight: '500' }}>Log in to continue.</span>
                                 </Typography>
-                                <div style={{ padding : '20px 0px' }}>
+                                {unverifiedMsg && <StyledAlert severity="info" style={{ marginTop : '10px' }}>
+                                    Verify your email address to continue.
+                                    <div className='emailBtn'> 
+                                        <Button color='primary' size='small'
+                                                disabled = {loader}
+                                                onClick={sendEmailHandler} 
+                                                disableElevation> 
+                                                Send confirmation
+                                        </Button>  
+                                    </div> 
+                                </StyledAlert>} 
+                                {unverifiedAccountSuccess && <StyledAlert severity="success" style={{ marginTop : '10px' }}>
+                                    Verification link has been sent successfully.
+                                    <div className='emailBtn'> 
+                                        <Button color='primary'
+                                                size='small' 
+                                                disabled = {loader}
+                                                onClick={sendEmailHandler}
+                                                disableElevation> 
+                                                Resend Email
+                                        </Button>  
+                                        <a href={email.value && `https://${email.value.substring(email.value.indexOf('@') + 1, email.value.length)}`} 
+                                        target ='_blank'
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration : 'none' }}>
+                                                <Button size='small'
+                                                        disableElevation
+                                                        disabled = {loader}> 
+                                                        check mail
+                                                </Button>  
+                                        </a>
+                                    </div> 
+                                </StyledAlert>} 
+                                <div style={{ padding : '10px 0px' }}>
                                     <InputContainer style={{marginBottom : '25px'}}>
                                             <StyledTextField
                                                     id="outlined-error-helper-text"
@@ -196,13 +235,16 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler, error 
 const mapStateToProps = state => {
     return {
         loader : state.authReducer.loginLoader,
-        error : state.authReducer.error
+        error : state.authReducer.error,
+        unverifiedMsg : state.authReducer.unverifiedMsg,
+        unverifiedAccountSuccess : state.authReducer.unverifiedAccountSuccess,
     }
 }    
 
 const mapDispatchToProps = dispatch => {
     return {
-        login : (data) => dispatch(login(data))
+        login : (data) => dispatch(login(data)),
+        sendEmailToUnverifiedAccount : email => dispatch(sendEmailToUnverifiedAccount(email)),
     }
 }
 
@@ -271,7 +313,6 @@ const StyledTextField = styled(TextField)`
             }
         }
         .MuiFormHelperText-root {
-            position : absolute;
             top : 100%;
             margin-top : 0px;
             margin-left : 0px;
@@ -310,4 +351,16 @@ const Action = styled.div`
            cursor: pointer;
        }
    }
+`
+const StyledAlert = styled(Alert)`
+    &&& {
+        padding-top : 5px;
+        padding-bottom : 0px;
+        .emailBtn {
+            display : flex;
+            width : 100%;
+            justify-content : flex-start;
+            margin-top : 3px;
+        }
+    }
 `

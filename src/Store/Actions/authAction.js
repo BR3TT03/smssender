@@ -1,5 +1,7 @@
 import { START_REGISTRATION, REGISTRATION_MAIL_SUCCESS, START_LOGIN, LOGIN_SUCCESS, VERIFY_EMAIL_SUCCESS,
-      VERIFYING_EMAIL, REGISTRATION_FAIL, LOG_OUT, LOGIN_FAIL, RESENDING_EMAIL, RESEND_EMAIL_FAIL, RESEND_EMAIL_SUCCESS } from './actionTypes';
+      VERIFYING_EMAIL, REGISTRATION_FAIL, LOG_OUT, LOGIN_FAIL, RESENDING_EMAIL, RESEND_EMAIL_FAIL, RESEND_EMAIL_SUCCESS,
+        UNVERIFIED_ACCOUNT, SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT, SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_SUCCESS,
+      SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_FAIL } from './actionTypes';
 import axios from 'axios';
 
 const startRegistration = () => {
@@ -66,17 +68,26 @@ const loginFail = (error) => {
     }
 }
 
+const unverifiedAccount = () => {
+    return {
+        type : UNVERIFIED_ACCOUNT
+    }
+}
+
 export const login = (data) => {
     return dispatch => {
         dispatch(startLogin());
         axios.post(`/authenticate`, data)
           .then(res => {
-              console.log(res);
               dispatch(loginSuccess(res.data.split(' ')[2]));
           })
           .catch(err => {
-              console.log(err.response);
-              dispatch(loginFail('Incorrect email or password.'))
+              if(err.response.status === 406){
+                    dispatch(unverifiedAccount());
+              }
+              else {
+                    dispatch(loginFail('Incorrect email or password.'))
+              }
           })
     }
 } 
@@ -92,11 +103,7 @@ const verifyEmailSuccess = () => {
         type : VERIFY_EMAIL_SUCCESS
     }
 }
-// const verifyEmailFail = () => {
-//     return {
-//         type : VERIFY_EMAIL_FAIL
-//     }
-// }
+
 export const verifyEmail = token => {
     console.log(token)
     return dispatch => {
@@ -163,3 +170,33 @@ export const checkAuth = () => {
     }
 }
 
+const sendingEmailToUnverifiedAccount = () => {
+    return {
+        type : SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT
+    }
+}
+
+const sendingEmailToUnverifiedAccountSuccess = () => {
+    return {
+        type : SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_SUCCESS
+    }
+}
+
+const sendingEmailToUnverifiedAccountFail = () => {
+    return {
+        type : SENDING_EMAIL_TO_UNVERIFIED_ACCOUNT_FAIL
+    }
+}
+
+export const sendEmailToUnverifiedAccount = email => {
+     return dispatch => {
+         dispatch(sendingEmailToUnverifiedAccount())
+         axios.post(`reSendEmail/${email}`)
+           .then(_ => {
+               dispatch(sendingEmailToUnverifiedAccountSuccess())
+           })
+           .catch(err => {
+               dispatch(sendingEmailToUnverifiedAccountFail('Problem in resending email.'))
+           })
+     }
+}
