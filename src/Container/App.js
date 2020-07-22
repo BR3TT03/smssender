@@ -2,7 +2,7 @@ import React from 'react';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from 'styled-components';
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/styles';
-import LandingPage from './LandingPage';
+import PublicPage from './PublicPage';
 import Dashboard from './Dashboard';
 import '../font/flaticon.css'
 import { connect } from 'react-redux';
@@ -32,7 +32,7 @@ function App({ isAuth, checkAuth }) {
   return (
           <MuiThemeProvider theme={theme} >  
               <ThemeProvider theme={theme} >
-                      { isAuth ? <Dashboard /> : <LandingPage />}
+                      { isAuth ? <Dashboard /> : <PublicPage />}
               </ThemeProvider> 
           </MuiThemeProvider> 
      );

@@ -192,8 +192,8 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler, error,
                                                 </ShowHideBtn>
                                         </InputContainer>
                                         <Action>
-                                             <Link style={{ textDecoration : 'none' }}>
-                                                   <Typography to='/' variant='subtitle2' color = 'primary' gutterBottom>
+                                             <Link to='/forgot-password' style={{ textDecoration : 'none' }}>
+                                                   <Typography variant='subtitle2' color = 'primary' gutterBottom>
                                                         Forgot Password?
                                                    </Typography> 
                                              </Link>
