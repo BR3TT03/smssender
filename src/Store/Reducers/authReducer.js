@@ -86,7 +86,7 @@ const authReducer = (state = initState, action) => {
                           success : {
                             ...state.success,
                             value : true,
-                            msg : 'Password has been successfully changed. Login to continue.'
+                            msg : 'Password has been changed successfully. Login to continue.'
                         }
                       }
         case RESEND_EMAIL_SUCCESS :

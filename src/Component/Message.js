@@ -3,11 +3,18 @@ import styled from 'styled-components';
 import { Typography, Button, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Checkbox, TextField, ClickAwayListener } from '@material-ui/core';
 import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
 import SendIcon from '@material-ui/icons/Send';
+import { connect } from 'react-redux';
+import { sendMessage, setUserSuccess } from '../Store/Actions/userAction'
+import Loader from './Loader'
+import PublishIcon from '@material-ui/icons/Publish';
+import readXlsxFile from 'read-excel-file'
 
-function Message() {
+function Message({ sendMessage, loader, success, setUserSuccess }) {
 
     const [number, setNumber] = useState({ value : '', error : false });
     const [numberList, setNumberList] = useState({});
+    const [message, setMessage] = useState({ value : '', error : false });
+    const fileRef = React.useRef(null);
 
     const [open, setOpen] = useState({ val : false, label : '' });
   
@@ -55,12 +62,61 @@ function Message() {
         }
     }
 
+    const messageChangeHandler = e => {
+        setMessage({ ...message, value : e.target.value, error : false })
+    }
+
+    const sendMessageHandler = () => {
+        let messageError = false;
+        if(message.value.length < 2){
+            messageError = true
+        }
+        if(messageError) {
+            setMessage({ ...message, error : messageError });
+        }
+        else {
+           sendMessage(numberList, message.value)
+        }
+    }
+
+    const fileChangeHandler = e => {
+        let list = [];
+        const regx = /^[0-9]/;
+        readXlsxFile(e.target.files[0]).then((rows) => {
+               rows.map(number => number.map(num => list.push({ [num] : true })));
+               list = list.filter(filterList => Object.keys(filterList)[0] !== 'null' && regx.test(Object.keys(filterList)[0]));
+               let newList = {};
+               list.map(ob => Object.assign(newList, ob));
+               setNumberList({ ...numberList, ...newList })
+        })
+    }
+
+    React.useEffect(() => {
+        if(success.value){
+            setNumber({ value : '', error : false });
+            setNumberList({});
+            setMessage({ value : '', error : false });
+            setUserSuccess();
+        }
+    },[success, setUserSuccess])
+
     return (
         <Container>
+            { loader ? <Loader /> :  null}
           <Header>
               <Typography variant='subtitle2' color='textPrimary' style={{ fontSize : '16px' }}>
                     Send Message
               </Typography>    
+              <Button size='small' 
+                      variant='contained' 
+                      color='primary' 
+                      endIcon={<PublishIcon fontSize='small'/>}
+                      disableElevation
+                      style={{ textTransform : 'capitalize' }}
+                      onClick = {() => fileRef.current.click()}>
+                    Upload
+              </Button>    
+              <input type='file' ref={fileRef} style={{ display : 'none' }} onChange={fileChangeHandler} accept='.xlsx , .xls'/>
           </Header> 
           <SearchBox>
           <ClickAwayListener onClickAway={handleClickAway}>
@@ -130,10 +186,19 @@ function Message() {
                          variant="outlined"
                          rows={4}
                          fullWidth
+                         value={message.value}
+                         onChange={messageChangeHandler}
+                         error={message.error}
+                         helperText={ message.error ? "Message should be atleast two character long." : "" }
                     />
              </MessageBox> 
              <Action>
-                    <Button size='small' variant='contained' color='primary' endIcon={<SendIcon />} disableElevation>
+                    <Button size='small' 
+                            variant='contained' 
+                            color='primary' 
+                            endIcon={<SendIcon />} 
+                            disableElevation
+                            onClick={sendMessageHandler}>
                         Send
                     </Button>
              </Action>          
@@ -141,7 +206,21 @@ function Message() {
     )
 }
 
-export default Message;
+const mapStateToProps = state => {
+    return {
+        loader : state.userReducer.messageLoader,
+        success : state.userReducer.success,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        sendMessage : (numberList, sms) => dispatch(sendMessage(numberList, sms)),
+        setUserSuccess : () => dispatch(setUserSuccess()),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Message);
 
 const Container = styled.div`
     
@@ -158,6 +237,7 @@ const Header = styled.div`
    padding : 0px 20px;
    display : flex;
    align-items : center;
+   justify-content : space-between;
    border-bottom : 1px solid rgba(0, 0, 0, 0.12);
 `
 const SearchBox = styled.span`

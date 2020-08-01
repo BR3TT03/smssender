@@ -79,7 +79,13 @@ export const login = (data) => {
         dispatch(startLogin());
         axios.post(`/authenticate`, data)
           .then(res => {
-              dispatch(loginSuccess(res.data.split(' ')[2]));
+              if(res.data.role === "ROLE_USER"){
+                dispatch(loginSuccess(res.data.token));
+              }
+              else {
+                dispatch(loginFail('Incorrect email or password.'))
+              }
+              
           })
           .catch(err => {
               if(err.response.status === 406){

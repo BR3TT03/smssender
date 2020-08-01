@@ -2,29 +2,56 @@ import React from 'react'
 import styled from 'styled-components';
 import Navigation from '../Component/Navigation';
 import Homepage from '../Component/Homepage';
-import {  Avatar, Typography, IconButton, SwipeableDrawer } from '@material-ui/core';
+import {  Avatar, Typography, IconButton, SwipeableDrawer, Snackbar } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Switch, Route, useLocation, Redirect } from 'react-router-dom';
 import Setting from '../Component/Setting';
 import Subscription from '../Component/Subscription';
 import { connect } from 'react-redux';
-import  { loadUser } from '../Store/Actions/userAction';
+import  { loadUser, setUserError } from '../Store/Actions/userAction';
 import Skeleton from '@material-ui/lab/Skeleton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Media from 'react-media';
+import Alert from '@material-ui/lab/Alert'
 
-function Dashboard({ loadUser, userLoader, user }) {
+function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess, setUserError }) {
 
     const [openDrawer, setOpenDrawer] = React.useState(false);
     const location = useLocation();
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
 
     const toggleDrawer = () => {
         setOpenDrawer(!openDrawer)
     }
 
+    const handleCloseSnackBar = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenSnackbar(false);
+    };
+
+    const handleCloseErrorSnackBar = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenErrorSnackbar(false);
+      };
+
     React.useEffect(() => {
         loadUser();
     }, [loadUser])
+
+    React.useEffect(() => {
+        if(success.value){
+             setOpenSnackbar(true);
+        }
+        if(error.value){
+            setOpenErrorSnackbar(true);
+            setUserError();
+       }
+   },[success, error, setUserSuccess, setUserError])
 
     return (
         <Container>
@@ -73,7 +100,23 @@ function Dashboard({ loadUser, userLoader, user }) {
                         <Route path='/subscription' component={Subscription}/>
                         <Redirect to='/dashboard'/>
                      </Switch>
-               </Content>     
+               </Content>   
+               <Snackbar open={openSnackbar} 
+                          autoHideDuration={5000} 
+                          onClose={handleCloseSnackBar}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleCloseSnackBar} severity="success">
+                         {success.label}
+                    </Alert>
+                </Snackbar>   
+                <Snackbar open={openErrorSnackbar} 
+                          autoHideDuration={5000} 
+                          onClose={handleCloseErrorSnackBar}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={handleCloseErrorSnackBar} severity="error">
+                         {error.label}
+                    </Alert>
+                </Snackbar>  
         </Container>
     )
 }
@@ -82,12 +125,15 @@ const mapStateToProps = state => {
     return {
         userLoader : state.userReducer.userLoader,
         user : state.userReducer.user,
+        success : state.userReducer.success,
+        error : state.userReducer.error
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        loadUser : () => dispatch(loadUser())
+        loadUser : () => dispatch(loadUser()),
+        setUserError : () => dispatch(setUserError()),
     }
 }
 

@@ -6,6 +6,8 @@ import ChangePassword from './ChangePassword';
 import { motion } from 'framer-motion';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { connect } from 'react-redux';
+import ChangeName from './ChangeName';
+import ChangePhone from './ChangePhone';
 
 const fadeVariant = {
     start : {
@@ -19,7 +21,10 @@ const fadeVariant = {
         }
     }
 }
-function Setting({ userLoader }) {
+function Setting({ userLoader, user }) {
+    React.useEffect(() => {
+         document.title = 'SMS Nepal - Setting'   
+    },[])
                 return (
                         <Container variants={fadeVariant} initial='start' animate='end'>
                                 <Header>
@@ -44,7 +49,7 @@ function Setting({ userLoader }) {
                                                         </div>    
                                                         <div>
                                                             <Typography variant='subtitle2' className='number' component='div' align='right' style={{ fontFamily : 'Kanit' }}>
-                                                                100
+                                                                {user.smsLimit}
                                                             </Typography> 
                                                         </div>    
                                                 </div>   
@@ -60,6 +65,12 @@ function Setting({ userLoader }) {
                                             <StyledGrid item xs={12} sm={12} md={4} lg={4}>
                                                 <ChangePassword />
                                             </StyledGrid>  
+                                            <StyledGrid item xs={12} sm={12} md={4} lg={4}>
+                                                <ChangeName />
+                                            </StyledGrid>  
+                                            <StyledGrid item xs={12} sm={12} md={4} lg={4}>
+                                                <ChangePhone />
+                                            </StyledGrid> 
                                         </GridContainer>  
                                         :
                                         <LoaderContainer>
@@ -72,7 +83,8 @@ function Setting({ userLoader }) {
 
 const mapStateToProps = state => {
     return {
-        userLoader : state.userReducer.userLoader
+        userLoader : state.userReducer.userLoader,
+        user : state.userReducer.user,
     }
 }
 

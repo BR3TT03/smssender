@@ -19,7 +19,7 @@ const fadeVariant = {
         }
     }
 }
-function Subscription({ userLoader }) {
+function Subscription({ userLoader, user }) {
           return (
                     <Container variants={fadeVariant} initial='start' animate='end'>
                             <Header>
@@ -44,7 +44,7 @@ function Subscription({ userLoader }) {
                                                     </div>    
                                                     <div>
                                                         <Typography variant='subtitle2' className='number' component='div' align='right' style={{ fontFamily : 'Kanit' }}>
-                                                            100
+                                                            {user.smsLimit}
                                                         </Typography> 
                                                     </div>    
                                             </div>   
@@ -72,7 +72,8 @@ function Subscription({ userLoader }) {
 
 const mapStateToProps = state => {
     return {
-        userLoader : state.userReducer.userLoader
+        userLoader : state.userReducer.userLoader,
+        user : state.userReducer.user,
     }
 }
 

@@ -1,8 +1,60 @@
 import React from 'react'
 import styled from 'styled-components';
 import { Typography, TextField, Button } from '@material-ui/core';
+// import Alert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { changePassword } from '../Store/Actions/userAction';
+import { connect } from 'react-redux'
 
-function ChangePassword() {
+function ChangePassword({ changePassword, loader, success }) {
+
+    const [oldPass, setOldPass] = React.useState({ value : '', error : false, msg : 'Enter a valid password' });
+    const [newPass, setNewPass] = React.useState({ value : '', error : false, msg : 'Enter a valid password' });
+    const [confirmPass, setConfirmPass] = React.useState({ value : '', error : false, msg : 'Password does not match' });
+
+    const oldPassHandler = e => {
+        setOldPass({ ...oldPass, value : e.target.value, error : false });
+    }
+
+    const newPassHandler = e => {
+        setNewPass({ ...newPass, value : e.target.value, error : false });
+    }
+
+    const confirmPassHandler = e => {
+        setConfirmPass({ ...confirmPass, value : e.target.value, error : false });
+    }
+
+    const passwordChangeHadler = () => {
+        let oldPassError = false;
+        let newPassError = false;
+        let confirmPassError = false;
+        if(oldPass.value.length === 0) {
+            oldPassError = true;
+        }
+        if(newPass.value.length === 0) {
+            newPassError = true;
+        }
+        if(confirmPass.value !== newPass.value){
+            confirmPassError = true;
+        }
+        if(oldPassError || newPassError || confirmPassError){
+            setOldPass({ ...oldPass, error : oldPassError });
+            setNewPass({ ...newPass, error : newPassError });
+            setConfirmPass({ ...confirmPass, error : confirmPassError });
+        }
+        else {
+            changePassword(oldPass.value, newPass.value)
+        }
+    }
+
+    React.useEffect(() => {
+        if(success.value){
+            setOldPass({ value : '', error : false, msg : 'Enter a valid password' });
+            setNewPass({ value : '', error : false, msg : 'Enter a valid password' });
+            setConfirmPass({ value : '', error : false, msg : 'Enter a valid password' });
+        }
+    },[success])
+
     return (
         <Container>
              <Header>
@@ -18,6 +70,10 @@ function ChangePassword() {
                                 fullWidth
                                 type="password"
                                 size = 'small'
+                                value={oldPass.value}
+                                onChange={oldPassHandler}
+                                error = {oldPass.error}
+                                helperText = {oldPass.error ? oldPass.msg : '' }
                             />
                     </InputContainer> 
                     <InputContainer>
@@ -27,7 +83,11 @@ function ChangePassword() {
                                 fullWidth
                                 type="password"
                                 size = 'small'
-                            />
+                                value={newPass.value}
+                                onChange={newPassHandler}
+                                error = {newPass.error}
+                                helperText = { newPass.error ? newPass.msg : '' }
+                         />
                     </InputContainer> 
                     <InputContainer>
                         <StyledTextField
@@ -36,24 +96,45 @@ function ChangePassword() {
                                 fullWidth
                                 type="password"
                                 size = 'small'
+                                value={confirmPass.value}
+                                onChange={confirmPassHandler}
+                                error = {confirmPass.error}
+                                helperText = { confirmPass.error ? confirmPass.msg : '' }
                             />
                     </InputContainer> 
-                    <div style={{ display : 'flex', justifyContent : 'flex-end', width : '90%' }}>
+                    {/* <Alert severity="error" fullWidth>Enter a correct password</Alert> */}
+                    <div style={{ display : 'flex', justifyContent : 'flex-end', alignItems : 'center', width : '90%', marginTop : '20px' }}>
+                         {loader ? <CircularProgress size={25} style={{ marginRight : '10px' }}/> : null}
                           <Button 
                                 variant="contained" 
                                 color="primary" 
                                 disableElevation
                                 size='small'
-                                style={{ textTransform : 'capitalize', marginTop : '20px' }} >
+                                style={{ textTransform : 'capitalize' }} 
+                                onClick={passwordChangeHadler}
+                                disabled={loader} >
                                 Change Password
-                            </Button>
+                           </Button>
                      </div>   
             </Body>   
         </Container>
     )
 }
 
-export default ChangePassword;
+const mapStateToProps = state => {
+    return {
+        loader : state.userReducer.changePasswordLoader,
+        success : state.userReducer.success
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changePassword : (oldPass, newPass) => dispatch(changePassword(oldPass, newPass))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword);
 
 const Container = styled.div`
     display : flex;

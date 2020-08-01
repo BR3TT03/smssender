@@ -22,6 +22,9 @@ const fadeVariant = {
 }
 
 function Homepage({ userLoader, user }) {
+    React.useEffect(() => {
+        document.title = 'SMS Nepal - Dashboard';
+    },[])
     return (
         <Container variants={fadeVariant} initial='start' animate='end'>
               <Header>
@@ -46,7 +49,7 @@ function Homepage({ userLoader, user }) {
                                     </div>    
                                     <div>
                                         <Typography variant='subtitle2' className='number' component='div' align='right' style={{ fontFamily : 'Kanit' }}>
-                                            { user.userStatus && user.userStatus}
+                                            { user.smsLimit && user.smsLimit}
                                         </Typography> 
                                     </div>    
                              </div> 
