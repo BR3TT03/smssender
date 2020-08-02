@@ -13,6 +13,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Media from 'react-media';
 import Alert from '@material-ui/lab/Alert'
+import ManageGroups from '../Component/ManageGroups';
 
 function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess, setUserError }) {
 
@@ -98,6 +99,7 @@ function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess,
                          </Route>   
                         <Route path='/setting' component={Setting}/>
                         <Route path='/subscription' component={Subscription}/>
+                        <Route path='/manage-groups' component={ManageGroups}/>
                         <Redirect to='/dashboard'/>
                      </Switch>
                </Content>   

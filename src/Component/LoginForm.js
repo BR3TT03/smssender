@@ -160,7 +160,7 @@ function LoginForm({ open, handleClose, loader, login, switchFormHandler, error,
                                                     label="Email"
                                                     variant="outlined"
                                                     fullWidth
-                                                    type="text"
+                                                    type="email"
                                                     size = 'medium'
                                                     autoFocus
                                                     disabled = {loader}

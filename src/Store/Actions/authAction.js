@@ -88,7 +88,7 @@ export const login = (data) => {
               
           })
           .catch(err => {
-              if(err.response.status === 406){
+              if(err.response && err.response.status === 406){
                     dispatch(unverifiedAccount());
               }
               else {

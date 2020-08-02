@@ -13,6 +13,7 @@ import  { logOut } from '../Store/Actions/authAction';
 import { connect } from 'react-redux';
 import Skeleton from '@material-ui/lab/Skeleton';
 import logo from '../Assets/logo.png'
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
 function Navigation({ logOut, userLoader, itemClicked, user }) {
 
@@ -67,6 +68,14 @@ function Navigation({ logOut, userLoader, itemClicked, user }) {
                                             <SettingsIcon fontSize='small'/>
                                         </ListItemIcon>
                                         <ListItemText primary="Setting" />
+                                </ListItem>
+                        </StyledNavLink>
+                        <StyledNavLink to='/manage-groups' activeClassName='activeNav' exact onClick={itemClicked}>
+                                <ListItem button>
+                                        <ListItemIcon>
+                                            <GroupAddIcon fontSize='small'/>
+                                        </ListItemIcon>
+                                        <ListItemText primary="Manage Groups" />
                                 </ListItem>
                         </StyledNavLink>
                         <StyledNavLink to='/subscription' activeClassName='subs' exact onClick={itemClicked}>

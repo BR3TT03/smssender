@@ -51,14 +51,14 @@ const sendingMessageFail = () => {
     }
 }
 
-const success = data => {
+export const success = data => {
     return {
         type : SUCCESS,
         data : data
     }
 }
 
-const error = error => {
+export const error = error => {
     return {
         type : ERROR,
         error : error

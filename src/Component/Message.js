@@ -114,7 +114,7 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
                       disableElevation
                       style={{ textTransform : 'capitalize' }}
                       onClick = {() => fileRef.current.click()}>
-                    Upload
+                    Import
               </Button>    
               <input type='file' ref={fileRef} style={{ display : 'none' }} onChange={fileChangeHandler} accept='.xlsx , .xls'/>
           </Header> 
