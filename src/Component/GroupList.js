@@ -15,23 +15,33 @@ import { loadGroups, deleteGroup } from '../Store/Actions/groupsAction'
 import TableLoader from '../Component/TableLoader'
 import CreateGroupRoute from './CreateGroupRoute'
 import { Link, useHistory } from 'react-router-dom'
+import DeleteModal from './DeleteModal';
 
 const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoader }) => {
 
     const [open, setOpen] = React.useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = React.useState({ value : false, groupId : '' });
     const history = useHistory();
 
     const openModalHalder = () => {
         setOpen(true)
     }
-
+ 
     const closeModalHandler = () => {
         setOpen(false)
         history.push('/manage-groups');
     }
 
-    const deleteGroupHandler = groupId => {
-        deleteGroup(groupId)
+    const openDeleteModalHandler = groupId => {
+       setOpenDeleteModal({ ...openDeleteModal, value : true, groupId : groupId })
+    }
+    const closeDeleteModal = () => {
+        setOpenDeleteModal({ ...openDeleteModal, value : false })
+    }     
+
+    const deleteGroupHandler = () => {
+        deleteGroup(openDeleteModal.groupId)
+        setOpenDeleteModal({ ...openDeleteModal, value : false })
     }
 
     React.useEffect(() => {
@@ -41,6 +51,7 @@ const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoade
     return (
         <Container>
             { open ? <CreateGroupRoute closeModalHandler={closeModalHandler}/> : null }
+            { openDeleteModal.value ? <DeleteModal deleteGroupHandler={deleteGroupHandler} closeDeleteModal={closeDeleteModal}/> : null }
             <Header>
                     <Typography variant='subtitle2' color='textPrimary' style={{ fontSize : '16px' }}>
                             Group List
@@ -56,7 +67,6 @@ const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoade
                             Create Group      
                         </Button>
                     </Link>
-                 
             </Header>
             <Divider />
             <TableContainer style={{ padding : '2rem 3rem', boxSizing : 'border-box' }}>
@@ -90,9 +100,9 @@ const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoade
                                                    </Link> 
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    <IconButton size='small' onClick={deleteGroupHandler.bind(null, group.groupId)}>
+                                                    <IconButton size='small' onClick={openDeleteModalHandler.bind(null, group.groupId)}>
                                                           {  
-                                                            deletingGroupLoader 
+                                                            (deletingGroupLoader && group.groupId === openDeleteModal.groupId)
                                                                 ?
                                                                 <CircularProgress  size={20}/> 
                                                                 :

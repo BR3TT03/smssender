@@ -1,6 +1,7 @@
 import { LOADING_GROUPS_ERROR, LOADING_GROUPS_SUCCESS, LOADING_GROUPS, CREATING_GROUPS, CREATING_GROUPS_FAIL, CREATING_GROUPS_SUCCESS,
         UPDATING_GROUP_NAME, UPDATING_GROUP_NAME_SUCCESS, UPDATING_GROUP_NAME_ERROR, LOADING_GROUP_LIST, LOADING_GROUP_LIST_SUCCESS,
-        LOADING_GROUP_LIST_ERROR, DELETE_GROUP_ERROR, DELETE_GROUP_SUCCESS, DELETE_GROUP } from '../Actions/actionTypes';
+        LOADING_GROUP_LIST_ERROR, DELETE_GROUP_ERROR, DELETE_GROUP_SUCCESS, DELETE_GROUP, ADDING_GROUP_MEMBER,ADDING_GROUP_MEMBER_SUCCESS,
+        ADDING_GROUP_MEMBER_ERROR } from '../Actions/actionTypes';
 
 const initState = {
     groups : [],
@@ -10,7 +11,8 @@ const initState = {
     createSuccess : false,
     updadingGroupNameLoader : false,
     groupListLoader : false,
-    deletingGroupLoader : false
+    deletingGroupLoader : false,
+    addingMemberLoader : false
 }
 
 const groupsReducer = ( state= initState, action ) => {
@@ -54,9 +56,13 @@ const groupsReducer = ( state= initState, action ) => {
                             updadingGroupNameLoader : true
                         }
         case UPDATING_GROUP_NAME_SUCCESS : 
+                        const groupIndex = state.groups.findIndex(group => group.groupId === action.groupId);
+                        let newGroup = [...state.groups];
+                        newGroup[groupIndex] = { ...newGroup[groupIndex], groupName : action.groupName }
                         return {
                             ...state,
-                            updadingGroupNameLoader : false
+                            updadingGroupNameLoader : false,
+                            groups : [...newGroup]
                         }
         case UPDATING_GROUP_NAME_ERROR : 
                         return {
@@ -100,6 +106,21 @@ const groupsReducer = ( state= initState, action ) => {
                             ...state,
                             deletingGroupLoader : false
                         }
+        case ADDING_GROUP_MEMBER : 
+                        return {
+                            ...state,
+                            addingMemberLoader : true
+                        }  
+        case ADDING_GROUP_MEMBER_SUCCESS : 
+                        return {
+                            ...state,
+                            addingMemberLoader : false
+                        }  
+        case ADDING_GROUP_MEMBER_ERROR : 
+                        return {
+                            ...state,
+                            addingMemberLoader : false
+                        }    
         default : return state;
     }
 }

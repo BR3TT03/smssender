@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 
 const slideVariant = {
     start : {
-        x : '100%'
+        x : 500
     },
     end : {
         x : 0,
@@ -18,7 +18,7 @@ const slideVariant = {
         }
     },
     exit : {
-        x : '-100%',
+        x : -500,
         transition : {
             type : 'tween',
             duration : 0.3

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import  { Switch, Route } from 'react-router-dom'
 import CreateGroupForm from './CreateGroupForm';
 import EditGroup from './EditGroup';
+import AddMember from './AddMember';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 
@@ -24,13 +25,16 @@ function CreateGroupRoute({ closeModalHandler }) {
     return (
         <Container variants={fadeVariants} initial='start' animate='end'>
              <FormContainer>
-                 <AnimatePresence>
+                 <AnimatePresence exitBeforeEnter initial={false}>
                         <Switch location={location} key={location.key}>
                             <Route path='/manage-groups/create-group'>
                                 <CreateGroupForm closeModalHandler={closeModalHandler}/>
                             </Route>  
                             <Route path='/manage-groups/edit-group'>
                                 <EditGroup closeModalHandler={closeModalHandler}/>
+                            </Route> 
+                            <Route path='/manage-groups/add-member'>
+                                <AddMember closeModalHandler={closeModalHandler}/>
                             </Route> 
                         </Switch>
                  </AnimatePresence>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { Typography, TextField, Button, IconButton, CircularProgress } from '@material-ui/core'
-import PublishIcon from '@material-ui/icons/Publish';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,10 +12,13 @@ import  { useHistory } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { updateGroupName, loadGroupList } from '../Store/Actions/groupsAction'
 import  { connect } from 'react-redux'
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import SearchIcon from '@material-ui/icons/Search';
+import { Link } from 'react-router-dom'
 
 const slideVariant = {
     start : {
-        x : '100%'
+        x : 500
     },
     end : {
         x : 0,
@@ -26,7 +28,7 @@ const slideVariant = {
         }
     },
     exit : {
-        x : '-100%',
+        x : -500,
         transition : {
             type : 'tween',
             duration : 0.3
@@ -47,7 +49,6 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
     }
 
     useEffect(() => {
-        console.log(history)
         setGroupName(prev => {
             return {
                 ...prev,
@@ -90,43 +91,28 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
             <Typography variant='body1' color='textPrimary' gutterBottom>
                   Edit Group List
              </Typography>
-             <Typography variant='subtitle2' color='textSecondary'>
-                    Add members
-                </Typography>
-             <InputContainer>
-                <StyledTextField
-                        label="Name"
-                        variant="outlined"
-                        fullWidth
-                        type="text"
-                        size = 'small'
-                    />
-                     <StyledTextField
-                        label="Phone no"
-                        variant="outlined"
-                        fullWidth
-                        type="number"
-                        size = 'small'
-                        style={{ marginLeft : '7px' }}
-                    />
-            </InputContainer>
-            <div style={{ display : 'flex', justifyContent : 'space-between', width : '100%', marginBottom : '0.8rem' }}>
-                <Button variant='contained' 
-                        size='small'
-                        disableElevation
-                        style={{ textTransform : 'capitalize' }}
-                        startIcon={<PublishIcon fontSize='small'/>}
-                        >
-                     Import
-                </Button>
-                <Button variant='contained' 
-                        size='small'
-                        disableElevation
-                        color='primary'
-                        style={{ textTransform : 'capitalize' }}
-                        >
-                     Add
-                </Button>
+            <div style={{ display : 'flex', width : '100%', marginBottom : '0.8rem' }}>
+               <Link style={{ textDecoration : 'none' }} to={{
+                    pathname : '/manage-groups/add-member',
+                    state : { groupId : history.location.state.groupId, groupName : history.location.state.groupName }
+                }}>
+                    <Button variant='contained' 
+                                size='small'
+                                disableElevation
+                                startIcon={<OpenInNewIcon fontSize='small'/>}
+                                style={{ textTransform : 'capitalize' }}
+                                >
+                            Add new member
+                    </Button>
+               </Link> 
+            </div>
+            <div style={{ display : 'flex', justifyContent : 'center' , width : '100%', marginBottom : '0.8rem' }}>
+                <SearchBox>
+                    <input type='text' className='search-inp' placeholder='Search'/>
+                    <div className='search-icon'>
+                        <SearchIcon color='inherit'/>
+                    </div>    
+                </SearchBox>
             </div>
            { !groupListLoader ?
                 groupList.length !== 0 ?
@@ -279,5 +265,38 @@ const Empty = styled.div`
   width : 100%;
   display : flex;
   justify-content : center;
-  padding : 20px 10px;
+  padding : 20px 0px;
 `;
+export const SearchBox = styled.div`
+   width : 300px;
+   height : 35px;
+   display : flex;
+   box-sizing : border-box;
+
+   .search-inp {
+       height : 100%;
+       flex : 1;
+       border-radius : 3px 0px 0px 3px;
+       outline : none;
+       border : 0;
+       box-sizing : border-box;
+       padding : 1rem;
+       border : 1px solid rgba(0,0,0,0.1);
+       font-family : 'roboto';
+       font-size : 0.9em;
+       &::placeholder {
+           color : #9e9e9e;
+       }
+   }
+   .search-icon {
+       width : 50px;
+       border : 1px solid rgba(0,0,0,0.1);
+       border-left : none;
+       color : #000;
+       border-radius : 0px 3px 3px 0px;
+       display : flex;
+       justify-content : center;
+       align-items : center;
+       cursor: pointer;
+   }
+`
