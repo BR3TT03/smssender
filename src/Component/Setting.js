@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { connect } from 'react-redux';
 import ChangeName from './ChangeName';
-import ChangePhone from './ChangePhone';
 
 const fadeVariant = {
     start : {
@@ -62,15 +61,12 @@ function Setting({ userLoader, user }) {
                                 </Header>
                                 { !userLoader ? 
                                         <GridContainer container>
-                                            <StyledGrid item xs={12} sm={12} md={4} lg={4}>
+                                            <StyledGrid item xs={12} sm={12} md={6} lg={6}>
                                                 <ChangePassword />
                                             </StyledGrid>  
-                                            <StyledGrid item xs={12} sm={12} md={4} lg={4}>
+                                            <StyledGrid item xs={12} sm={12} md={6} lg={6}>
                                                 <ChangeName />
-                                            </StyledGrid>  
-                                            <StyledGrid item xs={12} sm={12} md={4} lg={4}>
-                                                <ChangePhone />
-                                            </StyledGrid> 
+                                            </StyledGrid>
                                         </GridContainer>  
                                         :
                                         <LoaderContainer>

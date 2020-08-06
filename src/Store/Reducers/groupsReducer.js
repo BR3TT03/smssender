@@ -1,18 +1,22 @@
 import { LOADING_GROUPS_ERROR, LOADING_GROUPS_SUCCESS, LOADING_GROUPS, CREATING_GROUPS, CREATING_GROUPS_FAIL, CREATING_GROUPS_SUCCESS,
         UPDATING_GROUP_NAME, UPDATING_GROUP_NAME_SUCCESS, UPDATING_GROUP_NAME_ERROR, LOADING_GROUP_LIST, LOADING_GROUP_LIST_SUCCESS,
         LOADING_GROUP_LIST_ERROR, DELETE_GROUP_ERROR, DELETE_GROUP_SUCCESS, DELETE_GROUP, ADDING_GROUP_MEMBER,ADDING_GROUP_MEMBER_SUCCESS,
-        ADDING_GROUP_MEMBER_ERROR } from '../Actions/actionTypes';
+        ADDING_GROUP_MEMBER_ERROR, DELETEING_GROUPMEMBER, DELETEING_GROUPMEMBER_ERROR, DELETEING_GROUPMEMBER_SUCCESS, UPDATING_GROUPMEMBER_ERROR,
+        UPDATING_GROUPMEMBER, UPDATING_GROUPMEMBER_SUCCESS, SET_CREATE_SUCCESS } from '../Actions/actionTypes';
 
 const initState = {
     groups : [],
     groupList : [],
+    newlyAddedGroup : {},
     groupsLoader : false,
     createGroupsLoader : false,
     createSuccess : false,
     updadingGroupNameLoader : false,
     groupListLoader : false,
     deletingGroupLoader : false,
-    addingMemberLoader : false
+    addingMemberLoader : false,
+    deletingGroupMembersLoader : false,
+    updatingGroupMemberLoader : false
 }
 
 const groupsReducer = ( state= initState, action ) => {
@@ -42,8 +46,18 @@ const groupsReducer = ( state= initState, action ) => {
                         return {
                             ...state,
                             createGroupsLoader : false,
+                            newlyAddedGroup : {
+                                ...state.newlyAddedGroup,
+                                groupName : action.data[action.data.length - 1].groupName,
+                                groupId : action.data[action.data.length - 1].groupId,
+                            },
                             groups : [...action.data],
                             createSuccess : true
+                        }
+        case SET_CREATE_SUCCESS : 
+                        return {
+                            ...state,
+                            createSuccess : false
                         }
         case CREATING_GROUPS_FAIL :
                         return {
@@ -72,18 +86,21 @@ const groupsReducer = ( state= initState, action ) => {
         case LOADING_GROUP_LIST :
                         return {
                             ...state,
-                            groupListLoader : true
+                            groupListLoader : true,
                         }      
         case LOADING_GROUP_LIST_SUCCESS :
+                        console.log(action.data);
                         return {
                             ...state,
                             groupListLoader : false,
-                            groupList : [...action.data]
+                            groupListLoaderSecondary : false, 
+                            groupList : [...action.data],
                         }       
         case LOADING_GROUP_LIST_ERROR :
                         return {
                             ...state,
-                            groupListLoader : false
+                            groupListLoader : false,
+                            groupListLoaderSecondary : false
                         }      
         case DELETE_GROUP : 
                         return {
@@ -121,6 +138,47 @@ const groupsReducer = ( state= initState, action ) => {
                             ...state,
                             addingMemberLoader : false
                         }    
+        case DELETEING_GROUPMEMBER : 
+                        return {
+                            ...state,
+                            deletingGroupMembersLoader : true
+                        }
+        case DELETEING_GROUPMEMBER_SUCCESS :
+                        const groupMemberIndex = state.groupList.findIndex( member => member.memberId === action.groupMemberId )
+                        let newGroupMembers = [...state.groupList];
+                        console.log(groupMemberIndex)
+                        if(groupMemberIndex > -1){
+                            newGroupMembers.splice(groupMemberIndex, 1);
+                        }
+                        return {
+                            ...state,
+                            deletingGroupMembersLoader : false,
+                            groupList : [...newGroupMembers]
+                        }
+        case DELETEING_GROUPMEMBER_ERROR : 
+                        return {
+                            ...state,
+                            deletingGroupMembersLoader : false
+                        }
+        case UPDATING_GROUPMEMBER : 
+                        return {
+                            ...state,
+                            updatingGroupMemberLoader : true
+                        }
+        case UPDATING_GROUPMEMBER_SUCCESS : 
+                        const groupListIndex = state.groupList.findIndex(group => group.memberId === action.memberId);
+                        let newGroupList = [...state.groupList];
+                        newGroupList[groupListIndex] = { ...newGroupList[groupListIndex], memberName : action.memberName, memberPhone : action.memberPhone }
+                        return {
+                            ...state,
+                            updatingGroupMemberLoader : false,
+                            groupList : [...newGroupList]
+                        }
+        case UPDATING_GROUPMEMBER_ERROR : 
+                        return {
+                            ...state,
+                            updatingGroupMemberLoader : false
+                        }
         default : return state;
     }
 }

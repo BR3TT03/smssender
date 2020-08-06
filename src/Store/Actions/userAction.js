@@ -1,5 +1,6 @@
 import {  LOAD_USER_DATA_SUCCESS, LOADING_USER_DATA, SENDING_MESSAGE, SENDING_MESSAGE_SUCCESS, SENDING_MESSAGE_FAIL, SET_USER_SUCCESS,
-        SET_USER_ERROR, SUCCESS, ERROR, CHANGING_PASSWORD, CHANGING_PASSWORD_SUCCESS, CHANGING_PASSWORD_ERROR } from './actionTypes';
+        SET_USER_ERROR, SUCCESS, ERROR, CHANGING_PASSWORD, CHANGING_PASSWORD_SUCCESS, CHANGING_PASSWORD_ERROR, CHANGING_USER_DETAIL,
+        CHANGING_USER_DETAIL_SUCCESS, CHANGING_USER_DETAIL_ERROR } from './actionTypes';
 import { logOut } from './authAction';
 import axios from 'axios';
 
@@ -157,5 +158,46 @@ export const changePassword = (oldPass, newPass) => {
             
            
         },1000)  
+    }
+}
+
+const changingUserDetail = () => {
+    return {
+        type : CHANGING_USER_DETAIL
+    }
+}
+const changingUserDetailSuccess = (name, phone) => {
+    return {
+        type : CHANGING_USER_DETAIL_SUCCESS,
+        name : name,
+        phone : phone
+    }
+}
+const changingUserDetailError = () => {
+    return {
+        type : CHANGING_USER_DETAIL_ERROR
+    }
+}
+
+export const changeUserDetail = (name, phone) => {
+    console.log(name, phone);
+    return (dispatch, getState) => {
+        dispatch(changingUserDetail());
+        const token = getState().authReducer.token;
+        axios.patch(`/updateUserDetails`, { name : name, phone : phone },
+             { headers : { Authorization : `Bearer ${token}`} })
+             .then(res => {
+                 if(res.status === 200) {
+                    dispatch(changingUserDetailSuccess(name, phone));
+                 }
+                 else {
+                    dispatch(changingUserDetailError());
+                    dispatch(error('Could not change detail right now.'))
+                 }
+             })
+             .catch(_ => {
+                dispatch(changingUserDetailError());
+                dispatch(error('Could not change detail right now.'))
+             })
     }
 }

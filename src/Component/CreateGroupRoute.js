@@ -4,7 +4,7 @@ import  { Switch, Route } from 'react-router-dom'
 import CreateGroupForm from './CreateGroupForm';
 import EditGroup from './EditGroup';
 import AddMember from './AddMember';
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 
 const fadeVariants = {
@@ -18,26 +18,30 @@ const fadeVariants = {
     }
 }
 
-function CreateGroupRoute({ closeModalHandler }) {
+function CreateGroupRoute({ closeModalHandler, openModalHalder, open }) {
 
     const location = useLocation();
 
+    React.useEffect(() => {
+        if(location.pathname.split('/')[2] === 'add-member' || location.pathname.split('/')[2] === 'create-group' || location.pathname.split('/')[2] === 'edit-group' ){
+            openModalHalder();
+        }
+    },[location, openModalHalder])
+
     return (
-        <Container variants={fadeVariants} initial='start' animate='end'>
+        open && <Container variants={fadeVariants} initial='start' animate='end'>
              <FormContainer>
-                 <AnimatePresence exitBeforeEnter initial={false}>
-                        <Switch location={location} key={location.key}>
-                            <Route path='/manage-groups/create-group'>
-                                <CreateGroupForm closeModalHandler={closeModalHandler}/>
-                            </Route>  
-                            <Route path='/manage-groups/edit-group'>
-                                <EditGroup closeModalHandler={closeModalHandler}/>
-                            </Route> 
-                            <Route path='/manage-groups/add-member'>
-                                <AddMember closeModalHandler={closeModalHandler}/>
-                            </Route> 
+                        <Switch>
+                                <Route path='/manage-groups/create-group'>
+                                    <CreateGroupForm closeModalHandler={closeModalHandler}/>
+                                </Route>  
+                                <Route path='/manage-groups/edit-group'>
+                                    <EditGroup closeModalHandler={closeModalHandler}/>
+                                </Route> 
+                                <Route path='/manage-groups/add-member'>
+                                    <AddMember closeModalHandler={closeModalHandler}/>
+                                </Route> 
                         </Switch>
-                 </AnimatePresence>
              </FormContainer>    
         </Container>
     )
@@ -60,7 +64,6 @@ const Container = styled(motion.div)`
 const FormContainer = styled.div`
    height : 100%;
    box-sizing : border-box;
-   padding : 1rem;
    width : 500px;
    background : #fff;
    display : flex;

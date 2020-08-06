@@ -9,36 +9,21 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import  { useHistory } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { updateGroupName, loadGroupList } from '../Store/Actions/groupsAction'
+import { updateGroupName, loadGroupList, deleteGroupMembers } from '../Store/Actions/groupsAction'
 import  { connect } from 'react-redux'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import SearchIcon from '@material-ui/icons/Search';
 import { Link } from 'react-router-dom'
+import CreateIcon from '@material-ui/icons/Create';
+import EditGroupMember from './EditGroupMember'
 
-const slideVariant = {
-    start : {
-        x : 500
-    },
-    end : {
-        x : 0,
-        transition : {
-            type : 'tween',
-            duration : 0.3
-        }
-    },
-    exit : {
-        x : -500,
-        transition : {
-            type : 'tween',
-            duration : 0.3
-        }
-    }
-}
-function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader, loadGroupList, groupList, groupListLoader }) {
+function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader, loadGroupList, groupList, groupListLoader, deleteGroupMembers,
+                deletingGroupMembersLoader }) {
 
     const history = useHistory();
     const [groupName, setGroupName] = useState({ value : '', error : false })
+    const [activeMemberId, setActiveMemberId] = useState('')
+    const [openEditModal, setOpenEditModal] = useState({ value : false, memberName : '', memberId : '', memberPhone : '' });
 
     const groupNameChangeHandler = e => {
         setGroupName({ ...groupName, value : e.target.value, error : false })
@@ -58,12 +43,22 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
         })
     }, [history])
 
+    const deleteGroupMemberHandler = memberId => {
+        setActiveMemberId(memberId)
+        deleteGroupMembers(memberId);
+    }
+
+    const closeEditHandler = () => {
+        setOpenEditModal({ ...openEditModal, value : false })
+    }
+
     useEffect(() => {
-        loadGroupList(history.location.state.groupId, 1)
+        loadGroupList(history.location.state.groupId, 0)
     }, [loadGroupList, history.location.state.groupId])
 
     return (
-        <Container variants={slideVariant} initial='start' animate='end' exit='exit'>
+        <Container>
+              {openEditModal.value ? <EditGroupMember openEditModal={openEditModal} closeEditHandler={closeEditHandler}/> : null}
               <Typography variant='body1' color='textPrimary'>
                   Edit Group Name
              </Typography>
@@ -114,15 +109,17 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
                     </div>    
                 </SearchBox>
             </div>
-           { !groupListLoader ?
+           { !groupListLoader?
                 groupList.length !== 0 ?
-                    <StyledTableContainer>
+                  <StyledTableContainer>
+                    <TableContainer>
                             <Table size='small' stickyHeader aria-label="sticky table">
                                     <TableHead>
                                         <TableRow>
                                                 <TableCell>S.N</TableCell>
                                                 <TableCell align="right">Name</TableCell>
                                                 <TableCell align="right">Phone no</TableCell>
+                                                <TableCell align="right">Edit</TableCell>
                                                 <TableCell align="right">Delete</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -134,8 +131,26 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
                                                     <TableCell align="right">{list.memberName}</TableCell>
                                                     <TableCell align="right">{list.memberPhone}</TableCell>
                                                     <TableCell align="right">
-                                                        <IconButton size='small'>
-                                                                <RemoveCircleOutlineIcon fontSize='small' color='secondary'/>
+                                                        <IconButton size='small'
+                                                                    onClick={() => setOpenEditModal({ 
+                                                                        ...openEditModal, 
+                                                                        value : true,
+                                                                        memberName : list.memberName,
+                                                                        memberId : list.memberId,
+                                                                        memberPhone : list.memberPhone
+                                                                        })}>
+                                                            <CreateIcon fontSize='small' />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <IconButton size='small' onClick={deleteGroupMemberHandler.bind(null, list.memberId)}>
+                                                                {
+                                                                    (deletingGroupMembersLoader && list.memberId === activeMemberId)
+                                                                    ?
+                                                                    <CircularProgress  size={20}/> 
+                                                                    :
+                                                                    <RemoveCircleOutlineIcon fontSize='small' color='secondary'/>
+                                                                }
                                                         </IconButton>
                                                     </TableCell>
                                             </TableRow>
@@ -143,7 +158,8 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
                                      }
                                  </TableBody> 
                             </Table>
-                        </StyledTableContainer>
+                        </TableContainer>  
+                       </StyledTableContainer> 
                   :
                 <Empty>
                     <Typography variant='subtitle2' 
@@ -151,7 +167,7 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
                                 color='textSecondary' 
                                 align='center' 
                                 component='div'>
-                            This group is empty. You can add some by importing an excel file or by typing manually.
+                            This group is empty. You can add some by clicking add member button.
                     </Typography>
                 </Empty>
              :
@@ -186,23 +202,27 @@ const mapStateToProps = state => {
         updadingGroupNameLoader : state.groupsReducer.updadingGroupNameLoader,
         groupList : state.groupsReducer.groupList,
         groupListLoader : state.groupsReducer.groupListLoader,
+        deletingGroupMembersLoader : state.groupsReducer.deletingGroupMembersLoader,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         updateGroupName : (groupName, groupId) => dispatch(updateGroupName(groupName, groupId)),
-        loadGroupList : (groupId, pageNo) => dispatch(loadGroupList(groupId, pageNo))
+        loadGroupList : (groupId, pageNo) => dispatch(loadGroupList(groupId, pageNo)),
+        deleteGroupMembers : memberId => dispatch(deleteGroupMembers(memberId))
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditGroup);
 
-const Container = styled(motion.div)`
+const Container = styled.div`
   display : flex;
   flex-direction : column;
   width : 100%;
   align-items : flex-start;
+  position : relative;
+  padding : 1rem;
 `;
 const InputContainer = styled.div`
     margin : 10px 0px 20px;
@@ -239,7 +259,7 @@ const StyledTextField = styled(TextField)`
         }
         `}
 `
-const StyledTableContainer = styled(TableContainer)`
+const StyledTableContainer = styled.div`
    overflow-y : auto;
     ::-webkit-scrollbar {
     width: 14px;

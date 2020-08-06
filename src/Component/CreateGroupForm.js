@@ -1,32 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Typography, TextField, Button, CircularProgress } from '@material-ui/core'
 import styled from 'styled-components';
-import { createGroup } from '../Store/Actions/groupsAction'
+import { createGroup, setCreateSuccess } from '../Store/Actions/groupsAction'
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom'
-import { motion } from 'framer-motion'
 
-const slideVariant = {
-    start : {
-        x : 500
-    },
-    end : {
-        x : 0,
-        transition : {
-            type : 'tween',
-            duration : 0.3
-        }
-    },
-    exit : {
-        x : -500,
-        transition : {
-            type : 'tween',
-            duration : 0.3
-        }
-    }
-}
 
-function CreateGroupForm({ closeModalHandler, createGroup, loader, createSuccess }) {
+function CreateGroupForm({ closeModalHandler, createGroup, loader, createSuccess, newlyAddedGroup, setCreateSuccess }) {
 
     const [groupName, setGroupName] = useState({ value : '', error : false });
     const history = useHistory()
@@ -52,14 +32,16 @@ function CreateGroupForm({ closeModalHandler, createGroup, loader, createSuccess
 
     useEffect(() => {
         if(createSuccess){
+            setCreateSuccess();
             history.push({
-                pathname : '/manage-groups/edit-group'
+                pathname : '/manage-groups/edit-group',
+                state : { groupName : newlyAddedGroup.groupName, groupId : newlyAddedGroup.groupId }
             })
         }
-    }, [createSuccess, history])
+    }, [createSuccess, history, newlyAddedGroup, setCreateSuccess])
 
     return (
-        <Container variants={slideVariant} initial='start' animate='end' exit='exit'>
+        <Container>
              <Typography variant='h6' color='textPrimary'>
                   Create Group  
              </Typography>
@@ -107,22 +89,25 @@ const mapStateToProps = state => {
     return {
         loader : state.groupsReducer.createGroupsLoader,
         createSuccess : state.groupsReducer.createSuccess,
+        newlyAddedGroup : state.groupsReducer.newlyAddedGroup,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        createGroup : groupName => dispatch(createGroup(groupName))
+        createGroup : groupName => dispatch(createGroup(groupName)),
+        setCreateSuccess : groupName => dispatch(setCreateSuccess())
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateGroupForm);
 
-const Container = styled(motion.div)`
+const Container = styled.div`
   display : flex;
   flex-direction : column;
   width : 100%;
   align-items : flex-start;
+  padding : 1rem;
 `;
 
 const InputContainer = styled.div`

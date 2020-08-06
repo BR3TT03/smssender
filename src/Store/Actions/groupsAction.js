@@ -1,7 +1,8 @@
 import { LOADING_GROUPS, LOADING_GROUPS_SUCCESS, LOADING_GROUPS_ERROR, CREATING_GROUPS, CREATING_GROUPS_FAIL, CREATING_GROUPS_SUCCESS,
         UPDATING_GROUP_NAME, UPDATING_GROUP_NAME_SUCCESS, UPDATING_GROUP_NAME_ERROR, LOADING_GROUP_LIST, LOADING_GROUP_LIST_SUCCESS,
         LOADING_GROUP_LIST_ERROR, DELETE_GROUP, DELETE_GROUP_ERROR, DELETE_GROUP_SUCCESS, ADDING_GROUP_MEMBER, ADDING_GROUP_MEMBER_SUCCESS,
-        ADDING_GROUP_MEMBER_ERROR } from './actionTypes';
+        ADDING_GROUP_MEMBER_ERROR, DELETEING_GROUPMEMBER, DELETEING_GROUPMEMBER_ERROR, DELETEING_GROUPMEMBER_SUCCESS, UPDATING_GROUPMEMBER,
+        UPDATING_GROUPMEMBER_ERROR, UPDATING_GROUPMEMBER_SUCCESS, SET_CREATE_SUCCESS } from './actionTypes';
 import { error, success } from './userAction'
 import axios from 'axios'
 
@@ -59,6 +60,12 @@ const creatingGroupsSuccess = data => {
 const creatingGroupsFail = () => {
     return {
         type : CREATING_GROUPS_FAIL
+    }
+}
+
+export const setCreateSuccess = () => {
+    return dispatch => {
+        dispatch({ type : SET_CREATE_SUCCESS })
     }
 }
 
@@ -124,7 +131,7 @@ const loadingGroupList = () => {
         type : LOADING_GROUP_LIST
     }
 }
-const loadingGroupListSuccess = data => {
+const loadingGroupListSuccess = (data) => {
     return {
         type : LOADING_GROUP_LIST_SUCCESS,
         data : data
@@ -175,17 +182,14 @@ export const deleteGroup = groupId => {
     return (dispatch, getState) => {
         dispatch(deletingGroups());
         const token = getState().authReducer.token;
-        console.log(groupId)
         axios.delete(`/groups/delete?groupIds=${groupId}`,
             { headers : { Authorization : `Bearer ${token}` }})
             .then(res => {
-                console.log(res)
                 dispatch(deletingGroupsSuccess(groupId))
             })
             .catch(err => {
-                console.log(err)
                 dispatch(deletingGroupsError());
-                dispatch(error('Could not load groups. Try again later'));
+                dispatch(error('Could not delete group. Try again later'));
             })
     }
 }
@@ -222,7 +226,91 @@ export const addGroupMember = (groupId, groupList) => {
              })
              .catch(err => {
                  dispatch(addingGroupMemberError());
-                 dispatch(error('Could not load groups. Try again later'));
+                 dispatch(error('Could not add members. Try again later'));
+             })
+    }
+}
+
+const deletingGroupMembers = () => {
+    return {
+        type : DELETEING_GROUPMEMBER
+    }
+}
+
+const deletingGroupMembersSuccess = (groupMemberId) => {
+    return {
+        type : DELETEING_GROUPMEMBER_SUCCESS,
+        groupMemberId : groupMemberId
+    }
+}
+
+const deletingGroupMembersError = () => {
+    return {
+        type : DELETEING_GROUPMEMBER_ERROR
+    }
+}
+
+export const deleteGroupMembers = (groupMemberId) => {
+    return (dispatch, getState) => {
+        dispatch(deletingGroupMembers());
+        const token = getState().authReducer.token
+        axios.delete(`/groups/deleteGroupMember?memberId=${groupMemberId}`,
+                { headers : { Authorization : `Bearer ${token}` }})
+                .then(res => {
+                    if(res.status === 200) {
+                        dispatch(deletingGroupMembersSuccess(groupMemberId))
+                    }
+                    else {
+                        dispatch(deletingGroupMembersError());
+                        dispatch(error('Could not delete group member. Please try again later'))
+                    }
+                })
+                .catch(err => {
+                    console.log(err.response);
+                    dispatch(deletingGroupMembersError());
+                    dispatch(error('Could not delete group member. Please try again later'))
+                })
+    }
+}
+
+const updatingGroupMember = () => {
+    return {
+        type : UPDATING_GROUPMEMBER
+    }
+}
+const updatingGroupMemberSuccess = (memberId, memberName, memberPhone) => {
+    return {
+        type : UPDATING_GROUPMEMBER_SUCCESS,
+        memberId : memberId,
+        memberName : memberName,
+        memberPhone : memberPhone
+    }
+}
+const updatingGroupMemberError = () => {
+    return {
+        type : UPDATING_GROUPMEMBER_ERROR
+    }
+}
+export const updateGroupMember = (memberId, memberName, memberPhone) => {
+    return (dispatch, getState) => {
+        dispatch(updatingGroupMember());
+        const token = getState().authReducer.token;
+        axios.patch(`/groups/updateGroupMemberDetails?memberId=${memberId}`,{ memberName : memberName , memberPhone : memberPhone },
+                { headers : { Authorization : `Bearer ${token}` }})
+             .then(res => {
+                 if(res.status === 200) {
+                    dispatch(updatingGroupMemberSuccess(memberId, memberName, memberPhone))
+                    dispatch(success('Member updated successfully.'))
+                 } 
+                 else {
+                     dispatch(updatingGroupMemberError());
+                     dispatch(error('Could not update member detail. Please try again later'))
+                 }
+
+             })   
+             .catch(_ => {
+                dispatch(updatingGroupMemberError());
+                dispatch(error('Could not update member detail. Please try again later'))
              })
     }
 }

@@ -81,7 +81,7 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
 
     const fileChangeHandler = e => {
         let list = [];
-        const regx = /^[0-9]/;
+        const regx = /^[9]\d{9}/;
         readXlsxFile(e.target.files[0]).then((rows) => {
                rows.map(number => number.map(num => list.push({ [num] : true })));
                list = list.filter(filterList => Object.keys(filterList)[0] !== 'null' && regx.test(Object.keys(filterList)[0]));

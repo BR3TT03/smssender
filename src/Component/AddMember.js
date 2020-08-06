@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react'
 import styled from 'styled-components';
-import { motion } from 'framer-motion'
 import { Typography, TextField, Button, Table, IconButton, CircularProgress } from '@material-ui/core'
 import PublishIcon from '@material-ui/icons/Publish';
 import TableBody from '@material-ui/core/TableBody';
@@ -16,26 +15,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { addGroupMember } from '../Store/Actions/groupsAction'
 import { setUserSuccess } from '../Store/Actions/userAction'
 import { connect } from 'react-redux' 
-
-const slideVariant = {
-    start : {
-        x : 500
-    },
-    end : {
-        x : 0,
-        transition : {
-            type : 'tween',
-            duration : 0.3
-        }
-    },
-    exit : {
-        x : -500,
-        transition : {
-            type : 'tween',
-            duration : 0.3
-        }
-    }
-}
+import helperImg from '../Assets/helper.JPG'
 
 function AddMember({ loader, addGroupMember, success, closeModalHandler, setUserSuccess }) {
 
@@ -87,9 +67,17 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
 
     const fileChangeHandler = e => {
         let list = [];
+        const regx = /^[9]\d{9}/;
         readXlsxFile(e.target.files[0]).then((rows) => {
-              list = rows.map(row => ({ memberName : row[0], memberPhone : row[1] }));
-              setMembers(members.concat(list));
+              list = rows.map(row => {
+                  if(regx.test(row[1])){
+                    return { memberName : row[0], memberPhone : row[1] }
+                  }
+                  return false;
+              });
+        })
+        .then(_ => {
+            setMembers(members.concat(list.filter( filterList => filterList !==false )));
         })
     }
 
@@ -105,13 +93,15 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
     },[success, closeModalHandler, setUserSuccess])
 
     return (
-        <Container variants={slideVariant} initial='start' animate='end' exit='exit'>
+        <Container>
              <Link style={{ textDecoration : 'none' }}
                    to={{
                        pathname : '/manage-groups/edit-group',
                        state : { groupId : history.location.state.groupId, groupName : history.location.state.groupName } 
                    }}>
-                    <ArrowBackIcon />
+                   <IconButton edge='start'>
+                        <ArrowBackIcon />
+                    </IconButton>    
              </Link>
               <Typography variant='body1' color='textPrimary'>
                   Add member
@@ -158,7 +148,21 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
                             >
                         Import
                     </Button>
-                    <HelpIcon style={{ marginLeft : '10px' }} fontSize='small' color='primary'/>
+                    <Helper>
+                        <HelpIcon fontSize='small' color='primary'/>
+                        <div className='helperModal'>
+                            <Typography variant='subtitle2' style={{ fontWeight : "400" }}>
+                                You can only import excel file.
+                            </Typography>
+                            <Typography variant='caption' style={{ color : '#757575' }}>
+                                Format for excel file is given in below image.
+                            </Typography>
+                            <img src={helperImg} alt=''/>
+                            <Typography variant='caption' color='secondary'>
+                                * Don't upload in any other format.
+                            </Typography>
+                        </div>
+                    </Helper>
                 </div>
                 <input type='file' ref={fileRef} style={{ display : 'none' }} onChange={fileChangeHandler} accept='.xlsx , .xls'/>
                 <Button variant='contained' 
@@ -172,7 +176,7 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
                      Add
                 </Button>
             </div>
-            <StyledTableContainer>
+           { members.length !== 0 ? <StyledTableContainer>
                 <Table size='small' stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
@@ -184,7 +188,7 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
                         </TableHead>
                     <TableBody>
                             {
-                                members.length !==0 && members.map((list, index) => 
+                                members.map((list, index) => 
                                     <TableRow key={index}>
                                             <TableCell>{index + 1}.</TableCell>
                                             <TableCell align="right">{list.memberName}</TableCell>
@@ -200,6 +204,17 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
                         </TableBody> 
                 </Table>
             </StyledTableContainer>
+             :
+            <Empty>
+                    <Typography variant='subtitle2' 
+                                style={{ fontSize : '13px', fontWeight : '400' }} 
+                                color='textSecondary' 
+                                align='center' 
+                                component='div'>
+                            This group is empty. You can add some by importing an excel file or by typing manually.
+                    </Typography>
+             </Empty>
+            }
                 <div style={{ display : 'flex', justifyContent : 'flex-end', width : '100%', marginTop : '0.8rem' }}>
                     <Button variant='contained' 
                             size='small'
@@ -241,11 +256,12 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddMember);
 
-const Container = styled(motion.div)`
+const Container = styled.div`
   display : flex;
   flex-direction : column;
   width : 100%;
   align-items : flex-start;
+  padding : 0px 1rem 1rem;
 `;
 const InputContainer = styled.div`
     margin : 10px 0px 20px;
@@ -303,4 +319,52 @@ const StyledTableContainer = styled(TableContainer)`
     ::-webkit-scrollbar-corner {
     background-color: transparent;
     }
+`;
+const Empty = styled.div`
+  width : 100%;
+  display : flex;
+  justify-content : center;
+  padding : 20px 0px;
+`;
+const Helper = styled.div`
+  margin-left : 7px;
+  cursor : pointer;
+  position : relative;
+  .helperModal {
+      position : absolute;
+      left : calc(100% + 7px);
+      top : -10px;
+      padding : 0.5rem 1rem;
+      width : 250px;
+      box-sizing : border-box;
+      background : #ede9fb;
+      border-radius : 3px;
+      flex-direction : column;
+      z-index : 3;  
+      border : 1px solid #ccc;
+      display : none;
+      opacity : 0;
+      transition : 350ms all;
+      &::after {
+         content : ''; 
+         position : absolute; 
+         left : -14px;
+         top : 12px;
+         border-top : 7px solid transparent;
+         border-right : 7px solid #ccc;
+         border-bottom : 7px solid transparent;
+         border-left : 7px solid transparent;
+      }
+      img {
+          width : 200px;
+          object-fit : contain;
+          margin : 7px auto;
+      }
+  }
+  &:hover {
+    .helperModal {
+        display : flex;
+        opacity : 1;
+    }
+  }
 `;

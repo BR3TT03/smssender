@@ -1,25 +1,37 @@
 import React from 'react'
 import styled from 'styled-components';
-import  { Button, Typography, TextField } from '@material-ui/core';
+import  { Button, Typography, TextField, CircularProgress } from '@material-ui/core';
 import { connect } from 'react-redux';
+import { changeUserDetail } from '../Store/Actions/userAction'
 
-function ChangeName({ name }) {
+function ChangeName({ name, phone, changeUserDetail, changeDetailLoader }) {
 
-    const [changeName, setChangeName] = React.useState(name);
-    const [error, setError] = React.useState(false);
+    const [changeName, setChangeName] = React.useState({ value : name, error : false });
+    const [changePhone, setChangePhone] = React.useState({ value : phone, error : false });
 
     const nameChangeHandler = e => {
-        setChangeName(e.target.value);
-        setError(false)
+        setChangeName({ ...changeName, value : e.target.value, error : false });
+    }
+
+    const phoneChangeHandler = e => {
+        setChangePhone({ ...changePhone, value : e.target.value, error : false });
     }
 
     const clickHandler = () => {
-        if(changeName.length < 3) {
-            setError(true)
+        let changeNameError = false;
+        let changePhoneError = false;
+        if(changeName.value.length < 1) {
+            changeNameError = true;
         }
-        else{
-            setError(false)
-            console.log('ok');
+        if(changePhone.value.length !== 10) {
+            changePhoneError = true
+        }
+        if( changeNameError || changePhoneError ) {
+            setChangeName({ ...changeName, error : changeNameError });
+            setChangePhone({ ...changePhone, error : changePhoneError });
+        }
+        else {
+            changeUserDetail(changeName.value, changePhone.value)
         }
     }
 
@@ -38,10 +50,24 @@ function ChangeName({ name }) {
                             fullWidth
                             type="text"
                             size = 'small'
-                            value={changeName}
+                            disabled={changeDetailLoader}
+                            value={changeName.value}
                             onChange={nameChangeHandler}
-                            error = {error}
-                            helperText = { error ? 'Enter valid name' : '' }
+                            error = {changeName.error}
+                            helperText = { changeName.error ? 'Enter valid name' : '' }
+                        />
+                    <StyledTextField
+                            label="Phone"
+                            variant="outlined"
+                            fullWidth
+                            type="number"
+                            disabled={changeDetailLoader}
+                            style={{ marginTop : '20px' }}
+                            size = 'small'
+                            value={changePhone.value}
+                            onChange={phoneChangeHandler}
+                            error = {changePhone.error}
+                            helperText = { changePhone.error ? 'Phone number must be 10 digits long.' : '' }
                         />
                 </InputContainer> 
                 <div style={{ display : 'flex', justifyContent : 'flex-end', width : '90%' }}>
@@ -49,10 +75,11 @@ function ChangeName({ name }) {
                             variant="contained" 
                             color="primary" 
                             disableElevation
+                            disabled={changeDetailLoader}
                             size='small'
                             style={{ textTransform : 'capitalize', marginTop : '20px' }} 
                             onClick={clickHandler}>
-                            Save
+                                 {changeDetailLoader ? <CircularProgress size={20}/> : 'Save'}
                         </Button>
                     </div>   
             </Body> 
@@ -63,10 +90,18 @@ function ChangeName({ name }) {
 const mapStateToProps = state => {
     return {
         name : state.userReducer.user.name,
+        phone : state.userReducer.user.phone,
+        changeDetailLoader : state.userReducer.changeDetailLoader
     }
 }
 
-export default connect(mapStateToProps)(ChangeName);
+const mapDispatchToProps = dispatch => {
+    return {
+        changeUserDetail : (name, phone) => dispatch(changeUserDetail(name, phone))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChangeName);
 
 const Container = styled.div`
     display : flex;

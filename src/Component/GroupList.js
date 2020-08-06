@@ -50,7 +50,7 @@ const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoade
 
     return (
         <Container>
-            { open ? <CreateGroupRoute closeModalHandler={closeModalHandler}/> : null }
+            <CreateGroupRoute openModalHalder={openModalHalder} open={open} closeModalHandler={closeModalHandler}/>
             { openDeleteModal.value ? <DeleteModal deleteGroupHandler={deleteGroupHandler} closeDeleteModal={closeDeleteModal}/> : null }
             <Header>
                     <Typography variant='subtitle2' color='textPrimary' style={{ fontSize : '16px' }}>
