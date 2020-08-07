@@ -72,7 +72,7 @@ export const sendMessage = (numberList, sms) => {
         let numbers = [];
         const token = getState().authReducer.token;
         for(let key in numberList){
-            if(numberList[key]){
+            if(numberList[key].value){
                 numbers.push(key);
             }
         }

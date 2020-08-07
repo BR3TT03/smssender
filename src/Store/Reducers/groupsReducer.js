@@ -27,10 +27,11 @@ const groupsReducer = ( state= initState, action ) => {
                             groupsLoader : true
                         }
         case LOADING_GROUPS_SUCCESS : 
+                        const newGrp = [...action.groups].map(group => ({ ...group, checked : false }));
                         return {
                             ...state,
-                            groupsLoader : false,
-                            groups : [...action.groups]
+                            groupsLoader : false, 
+                            groups : [...newGrp]
                         }
         case LOADING_GROUPS_ERROR : 
                         return {
@@ -89,7 +90,6 @@ const groupsReducer = ( state= initState, action ) => {
                             groupListLoader : true,
                         }      
         case LOADING_GROUP_LIST_SUCCESS :
-                        console.log(action.data);
                         return {
                             ...state,
                             groupListLoader : false,

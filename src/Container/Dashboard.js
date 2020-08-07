@@ -14,6 +14,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Media from 'react-media';
 import Alert from '@material-ui/lab/Alert'
 import ManageGroups from '../Component/ManageGroups';
+import ManageApi from '../Component/ManageApi';
 
 function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess, setUserError }) {
 
@@ -100,6 +101,7 @@ function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess,
                         <Route path='/setting' component={Setting}/>
                         <Route path='/subscription' component={Subscription}/>
                         <Route path='/manage-groups' component={ManageGroups}/>
+                        <Route path='/manage-api' component={ManageApi}/>
                         <Redirect to='/dashboard'/>
                      </Switch>
                </Content>   

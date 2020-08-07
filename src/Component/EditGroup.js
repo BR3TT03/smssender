@@ -111,8 +111,7 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
             </div>
            { !groupListLoader?
                 groupList.length !== 0 ?
-                  <StyledTableContainer>
-                    <TableContainer>
+                    <StyledTableContainer>
                             <Table size='small' stickyHeader aria-label="sticky table">
                                     <TableHead>
                                         <TableRow>
@@ -158,8 +157,7 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
                                      }
                                  </TableBody> 
                             </Table>
-                        </TableContainer>  
-                       </StyledTableContainer> 
+                        </StyledTableContainer>  
                   :
                 <Empty>
                     <Typography variant='subtitle2' 
@@ -259,7 +257,7 @@ const StyledTextField = styled(TextField)`
         }
         `}
 `
-const StyledTableContainer = styled.div`
+const StyledTableContainer = styled(TableContainer)`
    overflow-y : auto;
     ::-webkit-scrollbar {
     width: 14px;

@@ -150,6 +150,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(GroupList)
 const Container = styled.div`
     margin-bottom : 20px;
     border-radius : 10px;
+    width : 100%;
     background : #fff;
     box-sizing : border-box;
     box-shadow: rgba(53, 64, 82, 0.05) 1px 0px 14px 0px;

@@ -1,20 +1,25 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
-import { Typography, Button, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Checkbox, TextField, ClickAwayListener } from '@material-ui/core';
+import { Typography, Button, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Checkbox, TextField, ClickAwayListener, CircularProgress } from '@material-ui/core';
 import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
 import SendIcon from '@material-ui/icons/Send';
 import { connect } from 'react-redux';
-import { sendMessage, setUserSuccess } from '../Store/Actions/userAction'
+import { sendMessage, setUserSuccess, error } from '../Store/Actions/userAction'
 import Loader from './Loader'
 import PublishIcon from '@material-ui/icons/Publish';
 import readXlsxFile from 'read-excel-file'
+import Skeleton from '@material-ui/lab/Skeleton';
+import { loadGroups } from '../Store/Actions/groupsAction'
+import axios from 'axios'
 
-function Message({ sendMessage, loader, success, setUserSuccess }) {
+function Message({ sendMessage, loader, success, setUserSuccess, loadGroups, groups, groupsLoader, token, error }) {
 
     const [number, setNumber] = useState({ value : '', error : false });
     const [numberList, setNumberList] = useState({});
     const [message, setMessage] = useState({ value : '', error : false });
     const fileRef = React.useRef(null);
+    const [groupsChips, setGroupsChips] = useState(groups);
+    const [groupListLoader, setGroupListLoader] = useState(false)
 
     const [open, setOpen] = useState({ val : false, label : '' });
   
@@ -31,7 +36,7 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
         const check = Object.keys(numberList).findIndex(n => n === number.value );
         if(check === -1){
             let newList = { ...numberList };
-            Object.assign(newList, { [number.value] : true });
+            Object.assign(newList, { [number.value] : { value : true, name : '' } });
             setNumberList({ ...newList });
             setNumber({ ...number, value : '' })
         }
@@ -43,7 +48,10 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
     const checkBoxHandler = (key, e) => {
         setNumberList({
             ...numberList,
-            [key] : e.target.checked
+            [key] : {
+                ...numberList[key],
+                value : e.target.checked
+            }
         })
     }
 
@@ -83,12 +91,39 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
         let list = [];
         const regx = /^[9]\d{9}/;
         readXlsxFile(e.target.files[0]).then((rows) => {
-               rows.map(number => number.map(num => list.push({ [num] : true })));
+               rows.map(number => number.map(num => list.push({ [num] : { value : true, name : '' } })));
                list = list.filter(filterList => Object.keys(filterList)[0] !== 'null' && regx.test(Object.keys(filterList)[0]));
                let newList = {};
                list.map(ob => Object.assign(newList, ob));
                setNumberList({ ...numberList, ...newList })
         })
+    }
+
+    const groupCheckBoxHandler = (groupId, index, e) => {
+          let newGroup = [...groupsChips];
+          newGroup[index] = { ...newGroup[index], checked : e.target.checked };
+          setGroupsChips([...newGroup]);
+          if(e.target.checked){
+              setGroupListLoader(true);
+              axios.get(`/groups/members?groupId=${groupId}&page=0`,
+                    { headers : { Authorization : `Bearer ${token}` } })
+                   .then(res => {
+                        let newList = { ...numberList };
+                        res.data.map(member => 
+                                Object.assign(newList, { [member.memberPhone] : { value : true, name : member.memberName, groupId : groupId } 
+                              }))
+                        setNumberList({ ...newList });
+                        setGroupListLoader(false);
+                   })
+                   .catch(_ => {
+                        setGroupListLoader(false);
+                        error('Could not load data right now. Please try again later.')
+                   }) 
+          }
+          else {
+                let newList = Object.fromEntries(Object.entries(numberList).filter(list => !list[1].groupId || list[1].groupId !== groupId))
+                setNumberList({...newList})
+          }
     }
 
     React.useEffect(() => {
@@ -99,6 +134,14 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
             setUserSuccess();
         }
     },[success, setUserSuccess])
+
+    React.useEffect(() => {
+        loadGroups();
+    },[loadGroups])
+
+    React.useEffect(() => {
+        setGroupsChips([...groups])
+    },[groups])
 
     return (
         <Container>
@@ -141,13 +184,33 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
                 </div>
             </ClickAwayListener>   
           </SearchBox>
-           <SMSList>
+          <Groups>
+               {!groupsLoader ? 
+                   groupsChips.length > 0 && groupsChips.map((group, index) =>  
+                        <ChipList key={group.groupId}>
+                            <Checkbox color='primary'  
+                                      checked={group.checked || false}
+                                      disabled={groupListLoader}
+                                      onChange={groupCheckBoxHandler.bind(null, group.groupId, index)}  
+                                      style={{ padding : '5px' }} 
+                                      size='small' />
+                             {group.groupName}   
+                    </ChipList>)
+                :
+                <GroupSkeleton>
+                     <Skeleton variant="rect" width={80} height={30} style={{ borderRadius : '20px' }}/>
+                     <Skeleton variant="rect" width={80} height={30} style={{ borderRadius : '20px', marginLeft : '7px' }}/>
+                     <Skeleton variant="rect" width={80} height={30} style={{ borderRadius : '20px', marginLeft : '7px' }}/>
+                </GroupSkeleton> }       
+          </Groups>
+            { !groupListLoader ? <SMSList>
                 {  Object.keys(numberList).length !== 0 ?
                     <TableContainer >
                         <Table size="small" aria-label="a dense table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="center">Check</TableCell>
+                                    <TableCell align="center">Name</TableCell>
                                     <TableCell align="center">Number</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -159,14 +222,14 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
                                                         <StyledCheckbox 
                                                                 size='small' 
                                                                 color='primary' 
-                                                                checked={ numberList[key] }
+                                                                checked={ numberList[key].value }
                                                                 onChange={ checkBoxHandler.bind(null, key) }/>
                                                     </TableCell>
+                                                    <TableCell align="center">{numberList[key].name}</TableCell>
                                                     <TableCell align="center">{key}</TableCell>
                                             </TableRow>
                                         )
                                 }
-                              
                             </TableBody>
                         </Table>
                 </TableContainer>
@@ -178,6 +241,11 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
                      </div>   
                 }       
             </SMSList>
+            :
+            <div style={{ display : 'flex', justifyContent : 'center', padding : '1rem 0px' }}>
+                <CircularProgress size={30}/>
+            </div>
+            }
             <MessageBox>
                     <StyledTextField
                          id="outlined-multiline-static"
@@ -208,8 +276,11 @@ function Message({ sendMessage, loader, success, setUserSuccess }) {
 
 const mapStateToProps = state => {
     return {
-        loader : state.userReducer.messageLoader,
-        success : state.userReducer.success,
+         token : state.authReducer.token,
+         loader : state.userReducer.messageLoader,
+         groups : state.groupsReducer.groups,
+         success : state.userReducer.success,
+         groupsLoader : state.groupsReducer.groupsLoader,
     }
 }
 
@@ -217,6 +288,8 @@ const mapDispatchToProps = dispatch => {
     return {
         sendMessage : (numberList, sms) => dispatch(sendMessage(numberList, sms)),
         setUserSuccess : () => dispatch(setUserSuccess()),
+        loadGroups : () => dispatch(loadGroups()),
+        error : (err) => dispatch(error(err)),
     }
 }
 
@@ -244,7 +317,7 @@ const SearchBox = styled.span`
    display : flex;
    justify-content : center;
    align-items : center;
-   margin : 20px 10px 0px;
+   margin : 20px 10px 10px;
    box-sizing : border-box;
    position : relative;
    width : auto;
@@ -302,7 +375,7 @@ const StyledPermContactCalendarIcon = styled(PermContactCalendarIcon)`
      }
 `
 const SMSList = styled.div`
-    margin-top : 30px;
+    margin-top : 20px;
     padding : 0px 20px;
     max-height : 180px;
     overflow-y : auto;
@@ -351,3 +424,26 @@ const StyledTextField = styled(TextField)`
         }
         `}
 `
+const Groups = styled.div`
+     display : flex;
+     width : 100%;
+     box-sizing : border-box;
+     flex-wrap : wrap;
+     justify-content : center;
+`;
+const ChipList = styled.span`
+  ${({ theme }) => `border : 1.2px solid ${theme.palette.primary.main};
+            color : ${theme.palette.primary.main};`}  
+  display : flex;
+  align-items : center;
+  padding-right :10px;
+  box-sizing : border-box;
+  font-size: 0.75rem;
+  border-radius : 20px;
+  margin : 10px 8px 0px;
+  font-weight : 500;
+`;
+
+const GroupSkeleton = styled.div`
+    display : flex;
+`;

@@ -184,10 +184,10 @@ export const deleteGroup = groupId => {
         const token = getState().authReducer.token;
         axios.delete(`/groups/delete?groupIds=${groupId}`,
             { headers : { Authorization : `Bearer ${token}` }})
-            .then(res => {
+            .then(_ => {
                 dispatch(deletingGroupsSuccess(groupId))
             })
-            .catch(err => {
+            .catch(_ => {
                 dispatch(deletingGroupsError());
                 dispatch(error('Could not delete group. Try again later'));
             })

@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import Skeleton from '@material-ui/lab/Skeleton';
 import logo from '../Assets/logo.png'
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import CodeIcon from '@material-ui/icons/Code';
 
 function Navigation({ logOut, userLoader, itemClicked, user }) {
 
@@ -62,6 +63,14 @@ function Navigation({ logOut, userLoader, itemClicked, user }) {
                                         <ListItemText primary="Dashboard" />
                                 </ListItem>
                         </StyledNavLink>
+                        <StyledNavLink to='/manage-groups' activeClassName='activeNav' exact onClick={itemClicked}>
+                                <ListItem button>
+                                        <ListItemIcon>
+                                            <GroupAddIcon fontSize='small'/>
+                                        </ListItemIcon>
+                                        <ListItemText primary="Manage Groups" />
+                                </ListItem>
+                        </StyledNavLink>
                         <StyledNavLink to='/setting' activeClassName='activeNav' exact onClick={itemClicked}>
                                 <ListItem button>
                                         <ListItemIcon>
@@ -70,12 +79,12 @@ function Navigation({ logOut, userLoader, itemClicked, user }) {
                                         <ListItemText primary="Setting" />
                                 </ListItem>
                         </StyledNavLink>
-                        <StyledNavLink to='/manage-groups' activeClassName='activeNav' exact onClick={itemClicked}>
+                        <StyledNavLink to='/manage-api' activeClassName='activeNav' exact onClick={itemClicked}>
                                 <ListItem button>
                                         <ListItemIcon>
-                                            <GroupAddIcon fontSize='small'/>
+                                            <CodeIcon fontSize='small'/>
                                         </ListItemIcon>
-                                        <ListItemText primary="Manage Groups" />
+                                        <ListItemText primary="Manage Api" />
                                 </ListItem>
                         </StyledNavLink>
                         <StyledNavLink to='/subscription' activeClassName='subs' exact onClick={itemClicked}>
