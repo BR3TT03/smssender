@@ -1,6 +1,7 @@
 import { LOADING_USER_DATA, LOAD_USER_DATA_SUCCESS, SENDING_MESSAGE, SENDING_MESSAGE_SUCCESS, SENDING_MESSAGE_FAIL,
          SUCCESS, ERROR, SET_USER_ERROR, SET_USER_SUCCESS, CHANGING_PASSWORD, CHANGING_PASSWORD_SUCCESS, CHANGING_PASSWORD_ERROR,
-         CHANGING_USER_DETAIL, CHANGING_USER_DETAIL_SUCCESS, CHANGING_USER_DETAIL_ERROR } from '../Actions/actionTypes';
+         CHANGING_USER_DETAIL, CHANGING_USER_DETAIL_SUCCESS, CHANGING_USER_DETAIL_ERROR, GENERATING_API_KEY, GENERATING_API_KEY_SUCCESS,
+         GENERATING_API_KEY_ERROR, FETCHING_API_KEY } from '../Actions/actionTypes';
 
 const initState = {
     user : {},
@@ -9,7 +10,10 @@ const initState = {
     success : { value : false, label : '' },
     error : { value : false, label : '' },
     changePasswordLoader : false,
-    changeDetailLoader : false
+    changeDetailLoader : false,
+    apiKey : 0,
+    apiKeyLoader : false,
+    getApiLoader : false
 }
 
 const userReducer = (state = initState, action) => {
@@ -112,6 +116,29 @@ const userReducer = (state = initState, action) => {
                     return {
                         ...state,
                         changeDetailLoader : false
+                    }
+        case GENERATING_API_KEY : 
+                    return {
+                        ...state,
+                        apiKeyLoader : true
+                    }
+        case GENERATING_API_KEY_SUCCESS : 
+                    return {
+                        ...state,
+                        apiKeyLoader : false,
+                        apiKey : action.apiKey,
+                        getApiLoader : false
+                    }
+        case GENERATING_API_KEY_ERROR : 
+                    return {
+                        ...state,
+                        apiKeyLoader : false,
+                        getApiLoader : false
+                    }
+        case FETCHING_API_KEY : 
+                    return {
+                        ...state,
+                        getApiLoader : true
                     }
         default : return state;
     }

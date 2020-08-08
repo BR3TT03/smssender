@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components';
 import bg from '../Assets/bg-icon.svg';
 import { Grid, Typography, CircularProgress, Button, Tooltip } from '@material-ui/core';
 import { motion } from 'framer-motion';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { connect } from 'react-redux';
+import { generateApi, getApiKey } from '../Store/Actions/userAction'
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import CodeIcon from '@material-ui/icons/Code';
+import ApiDocs from './ApiDocs';
 
 const fadeVariant = {
     start : {
@@ -21,7 +23,18 @@ const fadeVariant = {
     }
 }
 
-function ManageApi({ userLoader, user }) {
+function ManageApi({ userLoader, user, generateApi, apiKeyLoader, apiKey, getApiKey, getApiLoader }) {
+
+    const [showApiDocs, setShowApiDocs] = useState(false)
+
+    const generateApiKeyHandler = () => {
+        generateApi()
+    }
+
+    React.useEffect(() => {
+        getApiKey();
+    }, [getApiKey])
+
     return (
         <Container variants={fadeVariant} initial='start' animate='end'>
                 <Header>
@@ -65,33 +78,58 @@ function ManageApi({ userLoader, user }) {
                                             <Typography variant='subtitle2' color='textPrimary' style={{ fontSize : '16px' }}>
                                                     Your Api key
                                             </Typography>
-                                            <GenerateApiBtn variant='contained' size='small' disableElevation>
-                                                Generate Api
+                                            <GenerateApiBtn variant='contained' size='small'
+                                                            onClick={generateApiKeyHandler}
+                                                            disabled={apiKeyLoader}
+                                                            disableElevation>
+                                                { apiKeyLoader ?<CircularProgress style={{ color : '#fff' }} size={20}/> : 'Generate Api' }
                                             </GenerateApiBtn>
                                         </ApiHeader>
                                         <ApiBody>
                                             <ApiKey>
-                                                <Typography variant='subtitle2'
-                                                             color='textSecondary' 
-                                                             style={{ fontWeight : '400', marginLeft : '5px', fontSize : '1rem' }}>
-                                                    Api key
-                                                </Typography> 
-                                                <div className='key'>
-                                                    <input type='text' value='eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmhpLnh0aGExMUBnbWFpbC5jb20iLCJleHAiOjE1OTY4MzIwNTIsImlhdCI6MTU5NjgyNDg1MiwianRpIjoiMTE4In0.sLGz-l19a-e_jb3DKlTR2fSFSC0yRNRAf1d7ZU3EBUtS6e_J95962pmp7u2iTh_2isiKwl1SI5XoGK2RmBtH5g' disabled />
-                                                    <Tooltip title="Copy" placement="top">
-                                                        <FileCopyOutlinedIcon 
-                                                            fontSize='small' 
-                                                            style={{ padding : '0px 7px', color:'rgba(0, 0, 0, 0.54)', cursor : 'pointer' }}/>
-                                                    </Tooltip>
-                                                </div>
+                                               {
+                                                   getApiLoader ?
+                                                   <>
+                                                    <Skeleton width={50} height = {20}/>
+                                                    <Skeleton width={250} height = {40}/>
+                                                   </> :
+                                                        apiKey === 0 ?
+                                                        <Typography variant='subtitle2'
+                                                                    color='textSecondary' 
+                                                                    align = 'center'
+                                                                    style={{ fontWeight : '400', marginLeft : '5px', fontSize : '1rem' }}>
+                                                            You have not generated an API key.
+                                                        </Typography> 
+                                                        :
+                                                        <>
+                                                            <Typography variant='subtitle2'
+                                                                        color='textSecondary' 
+                                                                        style={{ fontWeight : '400', marginLeft : '5px', fontSize : '1rem' }}>
+                                                                Api key 
+                                                            </Typography> 
+                                                            <div className='key'>
+                                                                <input type='text' value={apiKey} disabled />
+                                                                <Tooltip title="Copy" placement="top">
+                                                                    <FileCopyOutlinedIcon 
+                                                                        fontSize='small' 
+                                                                        style={{ padding : '0px 7px', color:'rgba(0, 0, 0, 0.54)', cursor : 'pointer' }}/>
+                                                                </Tooltip>
+                                                            </div>
+                                                  </>
+                                               } 
+                                          
+                              
+                                          
                                             </ApiKey>
                                             <Button variant='contained' size='small' 
                                                     disableElevation
                                                     color='primary'
+                                                    onClick={() => setShowApiDocs(!showApiDocs)}
                                                     endIcon={<CodeIcon fontSize='small'/>}
                                                     style={{ margin : '1rem', textTransform : 'capitalize' }}>
                                                  View Api docs
                                             </Button>
+                                            {showApiDocs ? <ApiDocs /> : null}
                                         </ApiBody>
                                    </ApiContainer>
                             </StyledGrid>  
@@ -108,11 +146,21 @@ function ManageApi({ userLoader, user }) {
 const mapStateToProps = state => {
     return {
         userLoader : state.userReducer.userLoader,
+        apiKeyLoader : state.userReducer.apiKeyLoader,
+        apiKey : state.userReducer.apiKey,
         user : state.userReducer.user,
+        getApiLoader : state.userReducer.getApiLoader
     }
 }
 
-export default connect(mapStateToProps)(ManageApi);
+const mapDispatchtoProps = dispatch => {
+    return {
+        generateApi : () => dispatch(generateApi()),
+        getApiKey : () => dispatch(getApiKey())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchtoProps)(ManageApi);
 
 const Container = styled(motion.div)`
     height : calc(100% - 56px);

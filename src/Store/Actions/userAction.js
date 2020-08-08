@@ -1,6 +1,7 @@
 import {  LOAD_USER_DATA_SUCCESS, LOADING_USER_DATA, SENDING_MESSAGE, SENDING_MESSAGE_SUCCESS, SENDING_MESSAGE_FAIL, SET_USER_SUCCESS,
         SET_USER_ERROR, SUCCESS, ERROR, CHANGING_PASSWORD, CHANGING_PASSWORD_SUCCESS, CHANGING_PASSWORD_ERROR, CHANGING_USER_DETAIL,
-        CHANGING_USER_DETAIL_SUCCESS, CHANGING_USER_DETAIL_ERROR } from './actionTypes';
+        CHANGING_USER_DETAIL_SUCCESS, CHANGING_USER_DETAIL_ERROR,GENERATING_API_KEY, GENERATING_API_KEY_SUCCESS, GENERATING_API_KEY_ERROR,
+        FETCHING_API_KEY } from './actionTypes';
 import { logOut } from './authAction';
 import axios from 'axios';
 
@@ -86,6 +87,7 @@ export const sendMessage = (numberList, sms) => {
                 { headers : { Authorization : `Bearer ${token}`} }
               )
                .then(res => {
+                   console.log(res);
                    dispatch(sendingMessageSuccess(numbers.length));
                    dispatch(success('Message successfully sent to '+numbers.length+' person.'));
                })
@@ -199,5 +201,60 @@ export const changeUserDetail = (name, phone) => {
                 dispatch(changingUserDetailError());
                 dispatch(error('Could not change detail right now.'))
              })
+    }
+}
+
+const generatingApiKey = () => {
+    return {
+        type : GENERATING_API_KEY
+    }
+}
+const generatingApiKeySuccess = (apiKey) => {
+    return {
+        type : GENERATING_API_KEY_SUCCESS,
+        apiKey : apiKey
+    }
+}
+const generatingApiKeyError = () => {
+    return {
+        type : GENERATING_API_KEY_ERROR
+    }
+}
+export const generateApi = () => {
+    return (dispatch, getState) => {
+        dispatch(generatingApiKey());
+        const token = getState().authReducer.token;
+        axios.patch(`/getApiKey`, null,
+                { headers : { Authorization : `Bearer ${token}`} })
+             .then(res => {
+                 dispatch(generatingApiKeySuccess(res.data.apiKey));   
+             })
+             .catch(err => {
+                dispatch(generatingApiKeyError());
+                dispatch(error('Could not generate API key right now.'))
+             })   
+    }
+}
+
+const fetchingApiKey = () => {
+    return {
+        type : FETCHING_API_KEY
+    }
+}
+
+export const getApiKey = () => {
+    return (dispatch, getState) => {
+        dispatch(fetchingApiKey());
+        const token = getState().authReducer.token;
+        axios.get(`/getApiKey`,
+                { headers : { Authorization : `Bearer ${token}`} })
+             .then(res => {
+                 console.log(res.data);
+                 dispatch(generatingApiKeySuccess(res.data));   
+             })
+             .catch(err => {
+                dispatch(generatingApiKeyError());
+                dispatch(error('Could not get API key right now.'))
+             })   
     }
 }
