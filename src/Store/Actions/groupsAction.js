@@ -1,9 +1,10 @@
-import { LOADING_GROUPS, LOADING_GROUPS_SUCCESS, LOADING_GROUPS_ERROR, CREATING_GROUPS, CREATING_GROUPS_FAIL, CREATING_GROUPS_SUCCESS,
+import { LOADING_GROUPS, LOADING_GROUPS_SUCCESS, CREATING_GROUPS, CREATING_GROUPS_FAIL, CREATING_GROUPS_SUCCESS,
         UPDATING_GROUP_NAME, UPDATING_GROUP_NAME_SUCCESS, UPDATING_GROUP_NAME_ERROR, LOADING_GROUP_LIST, LOADING_GROUP_LIST_SUCCESS,
         LOADING_GROUP_LIST_ERROR, DELETE_GROUP, DELETE_GROUP_ERROR, DELETE_GROUP_SUCCESS, ADDING_GROUP_MEMBER, ADDING_GROUP_MEMBER_SUCCESS,
         ADDING_GROUP_MEMBER_ERROR, DELETEING_GROUPMEMBER, DELETEING_GROUPMEMBER_ERROR, DELETEING_GROUPMEMBER_SUCCESS, UPDATING_GROUPMEMBER,
         UPDATING_GROUPMEMBER_ERROR, UPDATING_GROUPMEMBER_SUCCESS, SET_CREATE_SUCCESS } from './actionTypes';
 import { error, success } from './userAction'
+import { logOut } from './authAction'
 import axios from 'axios'
 
 const loadingGroups = () => {
@@ -18,12 +19,7 @@ const loadingGroupsSuccess = groups => {
         groups : groups
     }
 }
-const loadingGroupsError = error => {
-    return {
-        type : LOADING_GROUPS_ERROR,
-        error : error
-    }
-}
+
 export const loadGroups = () => {
     return  (dispatch, getState) => {
         const token = getState().authReducer.token;
@@ -35,13 +31,11 @@ export const loadGroups = () => {
                      dispatch(loadingGroupsSuccess(res.data));
                  } 
                  else {
-                     dispatch(loadingGroupsError())
-                     dispatch(error('Could not load groups. Try again later'));
+                     dispatch(logOut())
                  }
              })   
              .catch(err => {
-                 dispatch(loadingGroupsError())
-                 dispatch(error('Could not load groups. Try again later'));
+                dispatch(logOut())
              })
     }   
 }
@@ -77,7 +71,6 @@ export const createGroup = groupName => {
                  { headers : { Authorization : `Bearer ${token}` } })
                .then(res => {
                    if(res.status === 200){
-                       console.log(res);
                        dispatch(creatingGroupsSuccess(res.data)); 
                    }
                    else {
@@ -143,20 +136,35 @@ const loadingGroupListError = () => {
     }
 }
 
+function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
+
 export const loadGroupList = (groupId, pageNo, filter) => {
-    console.log(filter);
     return (dispatch, getState) => {
-        dispatch(loadingGroupList());
          const token = getState().authReducer.token;
-         axios.get(`/groups/members?groupId=${groupId}&page=${pageNo}`,
+         dispatch(loadingGroupList());
+         if(isNumber(filter)) {
+            axios.get(`/groups/members?groupId=${groupId}&page=${pageNo}&numberFilter=${filter}`,
+            { headers : { Authorization : `Bearer ${token}` }})
+            .then(res => {
+                dispatch(loadingGroupListSuccess(res.data));
+            })  
+            .catch(err =>{
+                dispatch(loadingGroupListError());
+                dispatch(error('Could not create groups. Try again later'));
+            })
+         }
+         else {
+                axios.get(`/groups/members?groupId=${groupId}&page=${pageNo}&nameFilter=${filter}`,
                 { headers : { Authorization : `Bearer ${token}` }})
-              .then(res => {
-                  dispatch(loadingGroupListSuccess(res.data));
-              })  
-              .catch(err =>{
-                  dispatch(loadingGroupListError());
-                  dispatch(error('Could not create groups. Try again later'));
-              })
+                .then(res => {
+                    dispatch(loadingGroupListSuccess(res.data));
+                })  
+                .catch(err =>{
+                    dispatch(loadingGroupListError());
+                    dispatch(error('Could not create groups. Try again later'));
+                })
+         }
+   
     }
 }
 

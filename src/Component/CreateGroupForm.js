@@ -40,6 +40,10 @@ function CreateGroupForm({ closeModalHandler, createGroup, loader, createSuccess
         }
     }, [createSuccess, history, newlyAddedGroup, setCreateSuccess])
 
+    useEffect(() => {
+        document.title = 'SMS Nepal - Create group';
+    }, [])
+
     return (
         <Container>
              <Typography variant='h6' color='textPrimary'>

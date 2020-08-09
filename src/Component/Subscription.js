@@ -20,6 +20,11 @@ const fadeVariant = {
     }
 }
 function Subscription({ userLoader, user }) {
+
+        React.useEffect(() => {
+            document.title = 'SMS Nepal - Subscription';
+        }, [])
+
           return (
                     <Container variants={fadeVariant} initial='start' animate='end'>
                             <Header>

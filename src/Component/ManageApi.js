@@ -49,6 +49,10 @@ function ManageApi({ userLoader, user, generateApi, apiKeyLoader, apiKey, getApi
        apiKey === 0 && getApiKey();
     }, [getApiKey, apiKey])
 
+    React.useEffect(() => {
+        document.title = 'SMS Nepal - Manage Api ';
+    }, [])
+
     return (
         <Container variants={fadeVariant} initial='start' animate='end'>
                 <Header>

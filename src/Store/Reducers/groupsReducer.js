@@ -1,4 +1,4 @@
-import { LOADING_GROUPS_ERROR, LOADING_GROUPS_SUCCESS, LOADING_GROUPS, CREATING_GROUPS, CREATING_GROUPS_FAIL, CREATING_GROUPS_SUCCESS,
+import { LOADING_GROUPS_SUCCESS, LOADING_GROUPS, CREATING_GROUPS, CREATING_GROUPS_FAIL, CREATING_GROUPS_SUCCESS,
         UPDATING_GROUP_NAME, UPDATING_GROUP_NAME_SUCCESS, UPDATING_GROUP_NAME_ERROR, LOADING_GROUP_LIST, LOADING_GROUP_LIST_SUCCESS,
         LOADING_GROUP_LIST_ERROR, DELETE_GROUP_ERROR, DELETE_GROUP_SUCCESS, DELETE_GROUP, ADDING_GROUP_MEMBER,ADDING_GROUP_MEMBER_SUCCESS,
         ADDING_GROUP_MEMBER_ERROR, DELETEING_GROUPMEMBER, DELETEING_GROUPMEMBER_ERROR, DELETEING_GROUPMEMBER_SUCCESS, UPDATING_GROUPMEMBER_ERROR,
@@ -32,11 +32,6 @@ const groupsReducer = ( state= initState, action ) => {
                             ...state,
                             groupsLoader : false, 
                             groups : [...newGrp]
-                        }
-        case LOADING_GROUPS_ERROR : 
-                        return {
-                            ...state,
-                            groupsLoader : false
                         }
         case CREATING_GROUPS :
                         return {

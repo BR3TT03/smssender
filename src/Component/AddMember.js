@@ -92,6 +92,10 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
         }
     },[success, closeModalHandler, setUserSuccess])
 
+    React.useEffect(() => {
+        document.title = 'SMS Nepal - Add members ';
+    }, [])
+
     return (
         <Container>
              <Link style={{ textDecoration : 'none' }}

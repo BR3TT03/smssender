@@ -26,10 +26,15 @@ export const loadUser = () => {
             { headers : { Authorization : `Bearer ${token}`} }
         )
         .then(res => {
-            dispatch(loadUserDataSuccess(res.data));
+            if(res.status === 200) {
+                 dispatch(loadUserDataSuccess(res.data));
+            }
+            else {
+                dispatch(logOut())
+            }
         })
         .catch(err => {
-            logOut();
+            dispatch(logOut())
         })
     }
 }
@@ -87,7 +92,6 @@ export const sendMessage = (numberList, sms) => {
                 { headers : { Authorization : `Bearer ${token}`} }
               )
                .then(res => {
-                   console.log(res);
                    dispatch(sendingMessageSuccess(numbers.length));
                    dispatch(success('Message successfully sent to '+numbers.length+' person.'));
                })

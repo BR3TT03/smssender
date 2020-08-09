@@ -24,6 +24,7 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
     const [groupName, setGroupName] = useState({ value : '', error : false })
     const [activeMemberId, setActiveMemberId] = useState('')
     const [openEditModal, setOpenEditModal] = useState({ value : false, memberName : '', memberId : '', memberPhone : '' });
+    const [filter, setFilter] = useState('');
 
     const groupNameChangeHandler = e => {
         setGroupName({ ...groupName, value : e.target.value, error : false })
@@ -31,6 +32,10 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
 
     const changeGroupNameHandler = () => {
         updateGroupName(groupName.value, history.location.state.groupId)
+    }
+
+    const filterHandler = e => {
+        setFilter(e.target.value)
     }
 
     useEffect(() => {
@@ -53,8 +58,12 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
     }
 
     useEffect(() => {
-        loadGroupList(history.location.state.groupId, 0)
-    }, [loadGroupList, history.location.state.groupId])
+        loadGroupList(history.location.state.groupId, 0, filter)
+    }, [loadGroupList, history.location.state.groupId, filter])
+
+    useEffect(() => {
+        document.title = 'SMS Nepal - Edit group ' + history.location.state.groupName;
+    }, [history.location.state.groupName])
 
     return (
         <Container>
@@ -103,7 +112,7 @@ function EditGroup({ closeModalHandler, updateGroupName, updadingGroupNameLoader
             </div>
             <div style={{ display : 'flex', justifyContent : 'center' , width : '100%', marginBottom : '0.8rem' }}>
                 <SearchBox>
-                    <input type='text' className='search-inp' placeholder='Search'/>
+                    <input type='text' className='search-inp' value={filter}  onChange={filterHandler} placeholder='Search'/>
                     <div className='search-icon'>
                         <SearchIcon color='inherit'/>
                     </div>    
@@ -207,7 +216,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         updateGroupName : (groupName, groupId) => dispatch(updateGroupName(groupName, groupId)),
-        loadGroupList : (groupId, pageNo) => dispatch(loadGroupList(groupId, pageNo)),
+        loadGroupList : (groupId, pageNo, filter) => dispatch(loadGroupList(groupId, pageNo, filter)),
         deleteGroupMembers : memberId => dispatch(deleteGroupMembers(memberId))
     }
 }
