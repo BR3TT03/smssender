@@ -249,7 +249,6 @@ export const getApiKey = () => {
         axios.get(`/getApiKey`,
                 { headers : { Authorization : `Bearer ${token}`} })
              .then(res => {
-                 console.log(res.data);
                  dispatch(generatingApiKeySuccess(res.data));   
              })
              .catch(err => {

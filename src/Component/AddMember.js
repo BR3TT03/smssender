@@ -211,7 +211,7 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
                                 color='textSecondary' 
                                 align='center' 
                                 component='div'>
-                            This group is empty. You can add some by importing an excel file or by typing manually.
+                            You can add some by importing an excel file or by typing manually.
                     </Typography>
              </Empty>
             }

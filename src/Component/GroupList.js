@@ -45,8 +45,8 @@ const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoade
     }
 
     React.useEffect(() => {
-        loadGroups();
-    },[loadGroups])
+        groups.length === 0 && loadGroups();
+    },[loadGroups, groups])
 
     return (
         <Container>
@@ -69,7 +69,7 @@ const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoade
                     </Link>
             </Header>
             <Divider />
-            <TableContainer style={{ padding : '2rem 3rem', boxSizing : 'border-box' }}>
+            <StyledTableContainer>
                 { !loader ?
                       groups.length !== 0 ?  
                          <Table size="small">
@@ -125,7 +125,7 @@ const GroupList = ({ loadGroups, loader, groups, deleteGroup, deletingGroupLoade
                 :
                 <TableLoader />
                 }
-            </TableContainer>
+            </StyledTableContainer>
         </Container>
     )
 }
@@ -164,3 +164,13 @@ const Header = styled.div`
    justify-content : space-between;
    border-bottom : 1px solid rgba(0, 0, 0, 0.12);
 `
+const StyledTableContainer = styled(TableContainer)`
+    &&& {
+        padding : 2rem 3rem;
+        box-sizing : border-box;
+        width : 100%;
+        @media(max-width : 768px) {
+            padding : 0px;
+        }
+    }
+`;

@@ -136,8 +136,8 @@ function Message({ sendMessage, loader, success, setUserSuccess, loadGroups, gro
     },[success, setUserSuccess])
 
     React.useEffect(() => {
-        loadGroups();
-    },[loadGroups])
+       groups.length === 0 && loadGroups();
+    },[loadGroups, groups])
 
     React.useEffect(() => {
         setGroupsChips([...groups])

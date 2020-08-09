@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components';
 import bg from '../Assets/bg-icon.svg';
 import { Grid, Typography, CircularProgress, Button, Tooltip } from '@material-ui/core';
@@ -26,14 +26,28 @@ const fadeVariant = {
 function ManageApi({ userLoader, user, generateApi, apiKeyLoader, apiKey, getApiKey, getApiLoader }) {
 
     const [showApiDocs, setShowApiDocs] = useState(false)
+    const [copied, setCopied] = useState(false)
+    const inputRef = useRef(null);
 
     const generateApiKeyHandler = () => {
         generateApi()
     }
 
+    const copyTextHandler = e => {
+        if(navigator.clipboard){
+            navigator.clipboard.writeText(inputRef.current.value);
+            setCopied(true)
+        }
+        else {
+            inputRef.current.select();
+            document.execCommand("copy");
+            setCopied(true)
+        }
+    }
+
     React.useEffect(() => {
-        getApiKey();
-    }, [getApiKey])
+       apiKey === 0 && getApiKey();
+    }, [getApiKey, apiKey])
 
     return (
         <Container variants={fadeVariant} initial='start' animate='end'>
@@ -108,18 +122,17 @@ function ManageApi({ userLoader, user, generateApi, apiKeyLoader, apiKey, getApi
                                                                 Api key 
                                                             </Typography> 
                                                             <div className='key'>
-                                                                <input type='text' value={apiKey} disabled />
-                                                                <Tooltip title="Copy" placement="top">
+                                                                <input type='text' value={apiKey} readOnly ref={inputRef}/>
+                                                                <Tooltip title={ copied ? 'Copied' : 'Copy' } 
+                                                                         placement="top">
                                                                     <FileCopyOutlinedIcon 
+                                                                        onClick={copyTextHandler}
                                                                         fontSize='small' 
                                                                         style={{ padding : '0px 7px', color:'rgba(0, 0, 0, 0.54)', cursor : 'pointer' }}/>
                                                                 </Tooltip>
                                                             </div>
-                                                  </>
-                                               } 
-                                          
-                              
-                                          
+                                                     </>
+                                                   } 
                                             </ApiKey>
                                             <Button variant='contained' size='small' 
                                                     disableElevation
@@ -290,6 +303,7 @@ const ApiKey = styled.div`
           padding : 0.6rem;
           font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',monospace;
           font-size : 1rem;
+          background : #eee;
       }
   }
 `;

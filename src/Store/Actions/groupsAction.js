@@ -115,7 +115,7 @@ export const updateGroupName = (groupName, groupId) => {
          const token = getState().authReducer.token;
          console.log(token);
          axios.patch(`/groups/updateGroupDetails?groupName=${groupName}&groupId=${groupId}`,null,
-                 { headers : { Authorization : `Bearer ${token}` } } )
+                 { headers : { Authorization : `Bearer ${token}` }})
                  .then(_ => {
                      dispatch(updatingGroupNameSuccess(groupName, groupId))
                  })
@@ -143,12 +143,13 @@ const loadingGroupListError = () => {
     }
 }
 
-export const loadGroupList = (groupId, pageNo) => {
+export const loadGroupList = (groupId, pageNo, filter) => {
+    console.log(filter);
     return (dispatch, getState) => {
         dispatch(loadingGroupList());
          const token = getState().authReducer.token;
          axios.get(`/groups/members?groupId=${groupId}&page=${pageNo}`,
-                { headers : { Authorization : `Bearer ${token}` } } )
+                { headers : { Authorization : `Bearer ${token}` }})
               .then(res => {
                   dispatch(loadingGroupListSuccess(res.data));
               })  

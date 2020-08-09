@@ -62,150 +62,157 @@ function ApiDocs() {
                             style={{ fontWeight : '400', fontSize : '1rem', margin: '1rem 0px' }}>
                  Code samples
              </Typography>
-             <AppBar position="static" style={{ boxShadow : 'none' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                <Tab label="Javascript" />
-                <Tab label="Python"/>
-                <Tab label="Java" />
-                <Tab label="PHP" />
-                <Tab label="Node.js" />
-                </Tabs>
-            </AppBar>
-            <StyledBox value={value} index={0}role="tabpanel"
-                        hidden={value !== 0}
-                        id={`simple-tabpanel-${0}`}
-                        aria-labelledby={`simple-tab-${0}`}> 
-                    <samp>
-                        {'{'}<br />
-                        <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
-                            var myHeaders = new Headers();<br/>
-                             myHeaders.append("Authorization", "ApiKey <span className='highlight'>Your API key</span>");<br/>
-                             myHeaders.append("Content-Type", "application/json");<br/>
-                             var raw = JSON.stringify({'{'}"sms":"<span className='highlight'>Your message</span>","phone":[<span className='highlight'>Phone numbers list</span>]{'}'});<br/>
-                             var requestOptions = {'{'}<br/>
-                             method: 'POST',<br/>
-                             headers: myHeaders,<br/>
-                             body: raw,<br/>
-                             redirect: 'follow'<br/>
-                             {'}'};<br/>
-                             fetch("https://sms-nepal-backend.herokuapp.com/sendSMS", requestOptions)<br/>
-                             .then(response {"=>"} response.text())<br/>
-                             .then(result {"=>"}  console.log(result))<br/>
-                             .catch(error {"=>"} console.log('error', error));<br/>
-                        </div>
-                        {'}'}<br />
-                    </samp>
-            </StyledBox>
-            <StyledBox value={value} index={1} role="tabpanel"
-                    hidden={value !== 1}
-                    id={`simple-tabpanel-${1}`}
-                    aria-labelledby={`simple-tab-${1}`}>
-                    <samp>
-                    {'{'}<br />
-                        <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
-                         import requests<br/>
-                         url = "https://sms-nepal-backend.herokuapp.com/sendSMS"<br/>
-                         payload = "{'{'}\r\n    \"sms\": \"<span className='highlight'>Your Message</span>\",\r\n    \"phone\": [<span className='highlight'>Phone numbers list</span>]\r\n{'}'}"<br/>
-                         headers = {'{'}<br/>
-                         'Authorization': 'ApiKey <span className='highlight'>Your API key</span>',<br/>
-                         'Content-Type': 'application/json'<br/>
-                         {'}'}<br/>
-                         response = requests.request("POST", url, headers=headers, data = payload)<br/>
-                         print(response.text.encode('utf8'))<br/>
-                        </div>
-                    {'}'}<br />
-                    </samp>
-            </StyledBox>
-            <StyledBox value={value} index={2} role="tabpanel"
-                    hidden={value !== 2}
-                    id={`simple-tabpanel-${2}`}
-                    aria-labelledby={`simple-tab-${2}`}>
-                    <samp>
-                    {'{'}<br />
-                       <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
-                             OkHttpClient client = new OkHttpClient().newBuilder().build();<br />
-                            MediaType mediaType = MediaType.parse("application/json");<br />
-                            RequestBody body = RequestBody.create(mediaType, "{'{'}\r\n    \"sms\": \"<span className='highlight'>Your Message</span>\",\r\n    \"phone\": [<span className='highlight'>Phone numbers list</span>]\r\n{'}'}");<br />
-                            Request request = new Request.Builder()<br />
-                            .url("https://sms-nepal-backend.herokuapp.com/sendSMS")<br />
-                            .method("POST", body)<br />
-                            .addHeader("Authorization", "ApiKey <span className='highlight'>Your API key</span>")<br />
-                            .addHeader("Content-Type", "application/json")<br />
-                            .build();<br />
-                            Response response = client.newCall(request).execute();<br />
-                       </div>
-                       
-                    {'}'}<br />
-                    </samp>
-            </StyledBox>
-            <StyledBox value={value} index={3} role="tabpanel"
-                    hidden={value !== 3}
-                    id={`simple-tabpanel-${3}`}
-                    aria-labelledby={`simple-tab-${3}`}>
-                    <samp>
-                    {'{'}<br />
-                       <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
-                            $client = new http\Client;<br/>
-                            $request = new http\Client\Request;<br/>
-                            $request{'->'}setRequestUrl('https://sms-nepal-backend.herokuapp.com/sendSMS');<br/>
-                            $request{'->'}setRequestMethod('POST');<br/>
-                            $body = new http\Message\Body;<br/>
-                            $body{'->'}append('{'{'}<br/>
-                                "sms": "<span className='highlight'>Your Message</span>",<br/>
-                                "phone": [<span className='highlight'>Phone numbers list</span>]<br/>
-                             {'}'}');<br/>
-                            $request{'->'}setBody($body);<br/>
-                            $request{'->'}setOptions(array());<br/>
-                            $request{'->'}setHeaders(array(<br/>
-                            'Authorization' {'=>'} 'ApiKey <span className='highlight'>Your API key</span>',<br/>
-                            'Content-Type' {'=>'} 'application/json'<br/>
-                            ));<br/>
-                            $client{'->'}enqueue($request){'->'}send();<br/>
-                            $response = $client{'->'}getResponse();<br/>
-                            echo $response{'->'}getBody();<br/>
-                       </div>
-                    {'}'}<br />
-                    </samp>
-            </StyledBox>
-            <StyledBox value={value} index={4} role="tabpanel"
-                    hidden={value !== 4}
-                    id={`simple-tabpanel-${4}`}
-                    aria-labelledby={`simple-tab-${4}`}>
-                    <samp>
-                    {'{'}<br />
-                       <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
-                            var https = require('follow-redirects').https;<br/>
-                            var fs = require('fs');<br/>
-                            var options = {'{'}<br/>
-                            'method': 'POST',<br/>
-                            'hostname': 'sms-nepal-backend.herokuapp.com',<br/>
-                            'path': '/sendSMS',<br/>
-                            'headers': {'{'}<br/>
-                                'Authorization': 'ApiKey <span className='highlight'>Your API key</span>',<br/>
-                                'Content-Type': 'application/json'<br/>
-                            {'}'},<br/>
-                            'maxRedirects': 20<br/>
-                            {'}'};<br/>
-                            var req = https.request(options, function (res) {'{'}<br/>
-                            var chunks = [];<br/>
-                            res.on("data", function (chunk) {'{'}<br/>
-                                chunks.push(chunk);<br/>
-                            {'}'});<br/>
-                            res.on("end", function (chunk) {'{'}<br/>
-                                var body = Buffer.concat(chunks);<br/>
-                                console.log(body.toString());<br/>
-                            {'}'});<br/>
-                            res.on("error", function (error) {'{'}<br/>
-                                console.error(error);<br/>
-                            {'}'});<br/>
-                            {'}'});<br/>
-                            var postData = JSON.stringify({'{'}"sms":"<span className='highlight'>Phone numbers list</span>","phone":[<span className='highlight'>Phone numbers list</span>]{'}'});<br/>
-                            req.write(postData);<br/>
-                            req.end();<br/>
-                       </div>
-                    {'}'}<br />
-                    </samp>
-            </StyledBox>
+             <div style={{ width : '100%' }}>
+                        <AppBar position="static" style={{ boxShadow : 'none' }}>
+                            <Tabs value={value} 
+                                onChange={handleChange}
+                                variant="scrollable"
+                                scrollButtons="auto"
+                                aria-label="scrollable auto tabs example">
+                                <Tab label="Javascript" id={`scrollable-auto-tab-${0}`} aria-controls={`scrollable-auto-tabpanel-${0}`}/>
+                                <Tab label="Python" id={`scrollable-auto-tab-${1}`} aria-controls={`scrollable-auto-tabpanel-${1}`}/>
+                                <Tab label="Java" id={`scrollable-auto-tab-${2}`} aria-controls={`scrollable-auto-tabpanel-${2}`}/>
+                                <Tab label="PHP" id={`scrollable-auto-tab-${3}`} aria-controls={`scrollable-auto-tabpanel-${3}`}/>
+                                <Tab label="Node.js" id={`scrollable-auto-tab-${4}`} aria-controls={`scrollable-auto-tabpanel-${4}`}/>
+                            </Tabs>
+                        </AppBar>
+                        <StyledBox value={value} index={0}role="tabpanel"
+                                    hidden={value !== 0}
+                                    id={`scrollable-auto-tabpanel-${0}`}
+                                    aria-labelledby={`scrollable-auto-tab-${0}`}> 
+                                <samp>
+                                    {'{'}<br />
+                                    <div style={{ padding : '0px 30px', boxSizing : "border-box", lineHeight : '1.3rem' }}>
+                                        var myHeaders = new Headers();<br/>
+                                        myHeaders.append("Authorization", "ApiKey <span className='highlight'>Your_API_key</span>");<br/>
+                                        myHeaders.append("Content-Type", "application/json");<br/>
+                                        var raw = JSON.stringify({'{'}"sms":"<span className='highlight'>Your_message</span>","phone":[<span className='highlight'>Phone_numbers_list</span>]{'}'});<br/>
+                                        var requestOptions = {'{'}<br/>
+                                        method: 'POST',<br/>
+                                        headers: myHeaders,<br/>
+                                        body: raw,<br/>
+                                        redirect: 'follow'<br/>
+                                        {'}'};<br/>
+                                        fetch("https://sms-nepal-backend.herokuapp.com/sendSMS", requestOptions)<br/>
+                                        .then(response {"=>"} response.text())<br/>
+                                        .then(result {"=>"}  console.log(result))<br/>
+                                        .catch(error {"=>"} console.log('error', error));<br/>
+                                    </div>
+                                    {'}'}<br />
+                                </samp>
+                        </StyledBox>
+                        <StyledBox value={value} index={1} role="tabpanel"
+                                hidden={value !== 1}
+                                id={`scrollable-auto-tabpanel-${1}`}
+                                aria-labelledby={`scrollable-auto-tab-${1}`}>
+                                <samp>
+                                {'{'}<br />
+                                    <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
+                                    import requests<br/>
+                                    url = "https://sms-nepal-backend.herokuapp.com/sendSMS"<br/>
+                                    payload = "{'{'}\r\n    \"sms\": \"<span className='highlight'>Your_message</span>\",\r\n    \"phone\": [<span className='highlight'>Phone_numbers_list</span>]\r\n{'}'}"<br/>
+                                    headers = {'{'}<br/>
+                                    'Authorization': 'ApiKey <span className='highlight'>Your_API_key</span>',<br/>
+                                    'Content-Type': 'application/json'<br/>
+                                    {'}'}<br/>
+                                    response = requests.request("POST", url, headers=headers, data = payload)<br/>
+                                    print(response.text.encode('utf8'))<br/>
+                                    </div>
+                                {'}'}<br />
+                                </samp>
+                        </StyledBox>
+                        <StyledBox value={value} index={2} role="tabpanel"
+                                hidden={value !== 2}
+                                id={`scrollable-auto-tabpanel-${2}`}
+                                aria-labelledby={`scrollable-auto-tab-${2}`}>
+                                <samp>
+                                {'{'}<br />
+                                <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
+                                        OkHttpClient client = new OkHttpClient().newBuilder().build();<br />
+                                        MediaType mediaType = MediaType.parse("application/json");<br />
+                                        RequestBody body = RequestBody.create(mediaType, "{'{'}\r\n    \"sms\": \"<span className='highlight'>Your_message</span>\",\r\n    \"phone\": [<span className='highlight'>Phone_numbers_list</span>]\r\n{'}'}");<br />
+                                        Request request = new Request.Builder()<br />
+                                        .url("https://sms-nepal-backend.herokuapp.com/sendSMS")<br />
+                                        .method("POST", body)<br />
+                                        .addHeader("Authorization", "ApiKey <span className='highlight'>Your_API_key</span>")<br />
+                                        .addHeader("Content-Type", "application/json")<br />
+                                        .build();<br />
+                                        Response response = client.newCall(request).execute();<br />
+                                </div>
+                                
+                                {'}'}<br />
+                                </samp>
+                        </StyledBox>
+                        <StyledBox value={value} index={3} role="tabpanel"
+                                hidden={value !== 3}
+                                id={`scrollable-auto-tabpanel-${3}`}
+                                aria-labelledby={`scrollable-auto-tab-${3}`}>
+                                <samp>
+                                {'{'}<br />
+                                <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
+                                        $client = new http\Client;<br/>
+                                        $request = new http\Client\Request;<br/>
+                                        $request{'->'}setRequestUrl('https://sms-nepal-backend.herokuapp.com/sendSMS');<br/>
+                                        $request{'->'}setRequestMethod('POST');<br/>
+                                        $body = new http\Message\Body;<br/>
+                                        $body{'->'}append('{'{'}<br/>
+                                            "sms": "<span className='highlight'>Your_message</span>",<br/>
+                                            "phone": [<span className='highlight'>Phone_numbers_list</span>]<br/>
+                                        {'}'}');<br/>
+                                        $request{'->'}setBody($body);<br/>
+                                        $request{'->'}setOptions(array());<br/>
+                                        $request{'->'}setHeaders(array(<br/>
+                                        'Authorization' {'=>'} 'ApiKey <span className='highlight'>Your_API_key</span>',<br/>
+                                        'Content-Type' {'=>'} 'application/json'<br/>
+                                        ));<br/>
+                                        $client{'->'}enqueue($request){'->'}send();<br/>
+                                        $response = $client{'->'}getResponse();<br/>
+                                        echo $response{'->'}getBody();<br/>
+                                </div>
+                                {'}'}<br />
+                                </samp>
+                        </StyledBox>
+                        <StyledBox value={value} index={4} role="tabpanel"
+                                hidden={value !== 4}
+                                id={`scrollable-auto-tabpanel-${4}`}
+                                aria-labelledby={`scrollable-auto-tab-${4}`}>
+                                <samp>
+                                {'{'}<br />
+                                <div style={{ padding : '0px 30px', lineHeight : '1.3rem' }}>
+                                        var https = require('follow-redirects').https;<br/>
+                                        var fs = require('fs');<br/>
+                                        var options = {'{'}<br/>
+                                        'method': 'POST',<br/>
+                                        'hostname': 'sms-nepal-backend.herokuapp.com',<br/>
+                                        'path': '/sendSMS',<br/>
+                                        'headers': {'{'}<br/>
+                                            'Authorization': 'ApiKey <span className='highlight'>Your_API_key</span>',<br/>
+                                            'Content-Type': 'application/json'<br/>
+                                        {'}'},<br/>
+                                        'maxRedirects': 20<br/>
+                                        {'}'};<br/>
+                                        var req = https.request(options, function (res) {'{'}<br/>
+                                        var chunks = [];<br/>
+                                        res.on("data", function (chunk) {'{'}<br/>
+                                            chunks.push(chunk);<br/>
+                                        {'}'});<br/>
+                                        res.on("end", function (chunk) {'{'}<br/>
+                                            var body = Buffer.concat(chunks);<br/>
+                                            console.log(body.toString());<br/>
+                                        {'}'});<br/>
+                                        res.on("error", function (error) {'{'}<br/>
+                                            console.error(error);<br/>
+                                        {'}'});<br/>
+                                        {'}'});<br/>
+                                        var postData = JSON.stringify({'{'}"sms":"<span className='highlight'>Your_message</span>","phone":[<span className='highlight'>Phone_numbers_list</span>]{'}'});<br/>
+                                        req.write(postData);<br/>
+                                        req.end();<br/>
+                                </div>
+                                {'}'}<br />
+                                </samp>
+                        </StyledBox>
+             </div>
+           
         </Container>
     )
 }

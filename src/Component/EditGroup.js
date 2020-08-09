@@ -221,6 +221,7 @@ const Container = styled.div`
   align-items : flex-start;
   position : relative;
   padding : 1rem;
+  box-sizing : border-box;
 `;
 const InputContainer = styled.div`
     margin : 10px 0px 20px;
