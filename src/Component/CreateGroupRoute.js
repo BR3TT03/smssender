@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
-import  { Switch, Route } from 'react-router-dom'
+import  { Switch, Route, Redirect } from 'react-router-dom'
 import CreateGroupForm from './CreateGroupForm';
 import EditGroup from './EditGroup';
 import AddMember from './AddMember';
@@ -41,6 +41,7 @@ function CreateGroupRoute({ closeModalHandler, openModalHalder, open }) {
                                 <Route path='/manage-groups/add-member'>
                                     <AddMember closeModalHandler={closeModalHandler}/>
                                 </Route> 
+                                <Redirect to='/manage-groups'/>
                         </Switch>
              </FormContainer>    
         </Container>

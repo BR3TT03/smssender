@@ -71,12 +71,13 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
         readXlsxFile(e.target.files[0]).then((rows) => {
               list = rows.map(row => {
                   if(regx.test(row[1])){
-                    return { memberName : row[0], memberPhone : row[1] }
+                    return { memberName : row[0] || 'no name', memberPhone : row[1] }
                   }
                   return false;
               });
         })
         .then(_ => {
+            console.log(list)
             setMembers(members.concat(list.filter( filterList => filterList !==false )));
         })
     }
@@ -153,15 +154,18 @@ function AddMember({ loader, addGroupMember, success, closeModalHandler, setUser
                         Import
                     </Button>
                     <Helper>
-                        <HelpIcon fontSize='small' color='primary'/>
+                        <HelpIcon className='icon' fontSize='small' color='primary'/>
                         <div className='helperModal'>
                             <Typography variant='subtitle2' style={{ fontWeight : "400" }}>
                                 You can only import excel file.
                             </Typography>
-                            <Typography variant='caption' style={{ color : '#757575' }}>
+                            <Typography variant='caption' style={{ color : '#f5f5f5' }}>
                                 Format for excel file is given in below image.
                             </Typography>
                             <img src={helperImg} alt=''/>
+                            <Typography variant='caption' gutterBottom style={{ color : '#f5f5f5', lineHeight : '1rem' }}>
+                                Always start from left most cell of your excel file.
+                            </Typography>
                             <Typography variant='caption' color='secondary'>
                                 * Don't upload in any other format.
                             </Typography>
@@ -341,21 +345,23 @@ const Helper = styled.div`
       padding : 0.5rem 1rem;
       width : 250px;
       box-sizing : border-box;
-      background : #ede9fb;
+      background : #272c34;
       border-radius : 3px;
+      display : flex;
       flex-direction : column;
+      color : #fff;
       z-index : 3;  
-      border : 1px solid #ccc;
-      display : none;
+      border : 1px solid #272c34;
       opacity : 0;
-      transition : 350ms all;
+      transform : translateX(10px);
+      transition : 500ms all;
       &::after {
          content : ''; 
          position : absolute; 
          left : -14px;
          top : 12px;
          border-top : 7px solid transparent;
-         border-right : 7px solid #ccc;
+         border-right : 7px solid #272c34;
          border-bottom : 7px solid transparent;
          border-left : 7px solid transparent;
       }
@@ -365,10 +371,10 @@ const Helper = styled.div`
           margin : 7px auto;
       }
   }
-  &:hover {
-    .helperModal {
-        display : flex;
+  .icon:hover {
+    + .helperModal {
         opacity : 1;
+        transform : translateX(0px);
     }
   }
 `;

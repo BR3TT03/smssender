@@ -1,7 +1,7 @@
 import { LOADING_USER_DATA, LOAD_USER_DATA_SUCCESS, SENDING_MESSAGE, SENDING_MESSAGE_SUCCESS, SENDING_MESSAGE_FAIL,
          SUCCESS, ERROR, SET_USER_ERROR, SET_USER_SUCCESS, CHANGING_PASSWORD, CHANGING_PASSWORD_SUCCESS, CHANGING_PASSWORD_ERROR,
          CHANGING_USER_DETAIL, CHANGING_USER_DETAIL_SUCCESS, CHANGING_USER_DETAIL_ERROR, GENERATING_API_KEY, GENERATING_API_KEY_SUCCESS,
-         GENERATING_API_KEY_ERROR, FETCHING_API_KEY } from '../Actions/actionTypes';
+         GENERATING_API_KEY_ERROR, FETCHING_API_KEY, SENDING_FEED_BACK, SENDING_FEED_BACK_SUCCESS, SENDING_FEED_BACK_ERROR } from '../Actions/actionTypes';
 
 const initState = {
     user : {},
@@ -13,7 +13,8 @@ const initState = {
     changeDetailLoader : false,
     apiKey : 0,
     apiKeyLoader : false,
-    getApiLoader : false
+    getApiLoader : false,
+    feedbackLoader : false
 }
 
 const userReducer = (state = initState, action) => {
@@ -139,6 +140,21 @@ const userReducer = (state = initState, action) => {
                     return {
                         ...state,
                         getApiLoader : true
+                    }
+        case SENDING_FEED_BACK : 
+                    return {
+                        ...state,
+                        feedbackLoader : true
+                    }
+        case SENDING_FEED_BACK_SUCCESS : 
+                    return {
+                        ...state,
+                        feedbackLoader : false
+                    }
+        case SENDING_FEED_BACK_ERROR : 
+                    return {
+                        ...state,
+                        feedbackLoader : false
                     }
         default : return state;
     }

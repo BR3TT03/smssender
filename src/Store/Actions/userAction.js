@@ -1,7 +1,7 @@
 import {  LOAD_USER_DATA_SUCCESS, LOADING_USER_DATA, SENDING_MESSAGE, SENDING_MESSAGE_SUCCESS, SENDING_MESSAGE_FAIL, SET_USER_SUCCESS,
         SET_USER_ERROR, SUCCESS, ERROR, CHANGING_PASSWORD, CHANGING_PASSWORD_SUCCESS, CHANGING_PASSWORD_ERROR, CHANGING_USER_DETAIL,
         CHANGING_USER_DETAIL_SUCCESS, CHANGING_USER_DETAIL_ERROR,GENERATING_API_KEY, GENERATING_API_KEY_SUCCESS, GENERATING_API_KEY_ERROR,
-        FETCHING_API_KEY } from './actionTypes';
+        FETCHING_API_KEY, SENDING_FEED_BACK, SENDING_FEED_BACK_SUCCESS, SENDING_FEED_BACK_ERROR } from './actionTypes';
 import { logOut } from './authAction';
 import axios from 'axios';
 
@@ -260,4 +260,27 @@ export const getApiKey = () => {
                 dispatch(error('Could not get API key right now.'))
              })   
     }
+}
+
+export const sendFeedBack = (email, message) => {
+      return (dispatch, getState) => {
+          dispatch({ type : SENDING_FEED_BACK });
+          const token = getState().authReducer.token;
+          axios.post(`/sendFeedback`,{ from : email, message : message },
+             { headers : { Authorization : `Bearer ${token}`} })   
+            .then(res => {
+                if(res.status === 200) {
+                    dispatch({ type : SENDING_FEED_BACK_SUCCESS });
+                    dispatch(success('Thanks for your feedback. We are happy to hear from you.'));
+                }
+                else {
+                    dispatch({ type : SENDING_FEED_BACK_ERROR });
+                    dispatch(error('Could not send feedback right now.'));
+                }
+            }) 
+            .catch(err => {
+                dispatch({ type : SENDING_FEED_BACK_ERROR });
+                dispatch(error('Could not send feedback right now.'));
+            })
+      } 
 }

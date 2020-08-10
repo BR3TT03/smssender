@@ -146,6 +146,7 @@ export const loadGroupList = (groupId, pageNo, filter) => {
             axios.get(`/groups/members?groupId=${groupId}&page=${pageNo}&numberFilter=${filter}`,
             { headers : { Authorization : `Bearer ${token}` }})
             .then(res => {
+                console.log(res.data);
                 dispatch(loadingGroupListSuccess(res.data));
             })  
             .catch(err =>{
@@ -157,7 +158,8 @@ export const loadGroupList = (groupId, pageNo, filter) => {
                 axios.get(`/groups/members?groupId=${groupId}&page=${pageNo}&nameFilter=${filter}`,
                 { headers : { Authorization : `Bearer ${token}` }})
                 .then(res => {
-                    dispatch(loadingGroupListSuccess(res.data));
+                console.log(res.data);
+                dispatch(loadingGroupListSuccess(res.data));
                 })  
                 .catch(err =>{
                     dispatch(loadingGroupListError());

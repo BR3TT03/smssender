@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import Navigation from '../Component/Navigation';
 import Homepage from '../Component/Homepage';
-import {  Avatar, Typography, IconButton, SwipeableDrawer, Snackbar } from '@material-ui/core';
+import {  Avatar, Typography, IconButton, SwipeableDrawer, Snackbar, Menu, MenuItem } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Switch, Route, useLocation, Redirect } from 'react-router-dom';
 import Setting from '../Component/Setting';
@@ -15,6 +15,7 @@ import Media from 'react-media';
 import Alert from '@material-ui/lab/Alert'
 import ManageGroups from '../Component/ManageGroups';
 import ManageApi from '../Component/ManageApi';
+import Feedback from '../Component/Feedback';
 
 function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess, setUserError }) {
 
@@ -22,6 +23,25 @@ function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess,
     const location = useLocation();
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
+    const [openFeedBack, setOpenFeedBack] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const openMenu = Boolean(anchorEl);
+
+    const openFeedBackHandler = () => {
+        setOpenFeedBack(true)
+    }
+
+    const closeFeedBackHandler = () => {
+        setOpenFeedBack(false)
+    }
+
+    const handleMenuClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleMenuClose = () => {
+      setAnchorEl(null);
+    };
 
     const toggleDrawer = () => {
         setOpenDrawer(!openDrawer)
@@ -33,6 +53,11 @@ function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess,
         }
         setOpenSnackbar(false);
     };
+
+    const handleMenuItemClick = () => {
+        handleMenuClose();
+        openFeedBackHandler();
+    }
 
     const handleCloseErrorSnackBar = (event, reason) => {
         if (reason === 'clickaway') {
@@ -57,6 +82,7 @@ function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess,
 
     return (
         <Container>
+            {openFeedBack && <Feedback handleCloseFeedBack={closeFeedBackHandler}/>}
             <Media query={{ minWidth: 992 }}>
                 {matches =>
                     matches ? (
@@ -91,8 +117,19 @@ function Dashboard({ loadUser, userLoader, user, success, error, setUserSuccess,
                                         style={{ background : 'rgba(255, 255, 255, 0.1)' }}
                                 />}
                             <IconButton>
-                                <MoreVertIcon style={{ color : '#fff'  }}/>  
-                            </IconButton>  
+                                <MoreVertIcon style={{ color : '#fff'  }}  onClick={handleMenuClick}/>  
+                            </IconButton>
+                            <Menu
+                                id="long-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={openMenu}
+                                onClose={handleMenuClose}
+                            > 
+                                <MenuItem onClick={handleMenuItemClick}>
+                                    Send feedback
+                                </MenuItem>
+                            </Menu> 
                     </AppBar>
                     <Switch>
                         <Route path='/dashboard'>
